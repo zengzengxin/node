@@ -1,0 +1,401 @@
+1简介
+jdbc是一个中间的件，连接java和各个数据库，但是连接不同的数据库有不同的jdbC类，
+
+2简单的连接步骤
+1、引入相对应的jar包
+2、通过声明“各自driver”类的对象向数据库声明注册，让数据库启动相应的连接需要的东西做好准备
+3、准备好dbUrl,    不同数据库各不相同
+   准备好 dbUser, 账户
+   准备好dbPwd    密码
+4、通过Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPwd);连接数据库，并且把连接交给conn
+5、Statement stmt = conn.createStatement();通过conn创造对象给statement的对象
+6、通过statement里面的众多的针对数据库的方法来操作数据库
+
+
+3、实例（sqlserver）
+package Connection_java;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JOptionPane;
+
+public class jdbc {
+	protected static String dbClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";// SQL数据库引擎
+	protected static String dbUrl = "jdbc:sqlserver://localhost:1433;DatabaseName=students";// 数据源
+	protected static String dbUser = "kdbc";
+	protected static String dbPwd = "123456";
+	protected static String second = null;
+	public static Connection conn = null;
+	static {
+		try {
+			if (conn == null) {
+				Class.forName(dbClassName); // 创造一个“com.microsoft.sqlserver.jdbc.SQLServerDriver”的对                                                              象，并且向数据库注册，告知数据库连接
+				conn = DriverManager.getConnection(dbUrl, dbUser, dbPwd);// 连接数据库，并且把权力给conn
+				System.out.print("数据库链接成功");
+			}
+		} catch (ClassNotFoundException e) {
+		        e.printStackTrace();
+		        JOptionPane.showMessageDialog(null,"请将SQLServer JDBC4.0以上的驱动包复制到lib文件夹中。");
+			System.exit(-1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private jdbc() {
+
+	}
+
+	public static void main(String args[]) {
+
+		Statement stmt = null; // statement具有很多处理数据库sql语句的方法，但是需要先得倒连接后的权限
+
+		int age;
+
+		ResultSet rs = null; // resultset是一个内部类，专门存储sql返回的结果集
+
+		try {
+			stmt = conn.createStatement(); // 调用createStatement()方法，将连接权利和信息给stmt
+
+			rs = stmt.executeQuery("select * from student"); // 执行查询,返回一个结果集rs相当于一个游标，指在第一                                                                            条记录的上面。
+
+			while (rs.next()) { // 循环取得结果集(遍历) //next（）是第一条记录
+
+				age = rs.getInt("sage");
+
+				System.out.println(rs.getString("sno") + " " // 把某一字段的内容
+																                                                                             // 当成一个字符串拿出来,
+
+						+ rs.getString("sname") + " " // 也可以用其它的,比如rs.getInt("");等
+
+						+ rs.getString("ssex") + " "
+
+						+ rs.getString("sdept") + age);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} // 通过连接创建(createStatement)一个语句对象,不是new
+		finally {
+			try {
+				if (rs != null)
+					rs.close();
+				rs = null;
+				if (stmt != null)
+					stmt.close();
+				stmt = null;
+				if (conn != null)
+					conn.close();
+				conn = null;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+二、用Statement执行sql语句,不实用，因为不好传参，除非执行无需参数的sql
+
+package Connection_java;
+import java.sql.*;
+
+import javax.swing.JOptionPane;
+public class  testbatch {
+	
+	protected static String dbClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";// SQL数据库引擎
+	protected static String dbUrl = "jdbc:sqlserver://localhost:1433;DatabaseName=students";// 数据源
+	protected static String dbUser = "kdbc";
+	protected static String dbPwd = "123456";
+	protected static String second = null;
+	public static Connection conn = null;
+	static {
+		try {
+			if (conn == null) {
+				Class.forName(dbClassName); // 创造一个“com.microsoft.sqlserver.jdbc.SQLServerDriver”的对象，并且向数据库注册，告知数据库连接
+				conn = DriverManager.getConnection(dbUrl, dbUser, dbPwd);// 连接数据库，并且把权力给conn
+				System.out.println("数据库链接成功");
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+					"请将SQLServer JDBC4.0以上的驱动包复制到lib文件夹中。");
+			System.exit(-1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+//数据库连接
+
+	public static void main(String[] args) throws Exception {	
+		
+		Statement stmt = conn.createStatement();
+                sql = "insert into student values (7657865,'曾增鑫','男',22,'计算机')"
+		stmt.executeUpdate(sql);
+		stmt.close();
+		conn.close();
+
+	}
+
+}
+三、PreparedStatement 执行一条传参的sql语句 例子：用PreparedStatement插入一条带参数的sql
+
+package Connection_java;
+
+import java.sql.*;
+
+import javax.swing.JOptionPane;
+
+public class Perparedstament {
+	protected static String dbClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";// SQL数据库引擎
+	protected static String dbUrl = "jdbc:sqlserver://localhost:1433;DatabaseName=students";// 数据源
+	protected static String dbUser = "kdbc";
+	protected static String dbPwd = "123456";
+	protected static String second = null;
+	public static Connection conn = null;
+	static {
+		try {
+			if (conn == null) {
+				Class.forName(dbClassName); // 创造一个“com.microsoft.sqlserver.jdbc.SQLServerDriver”的对象，并且向数据库注册，告知数据库连接
+				conn = DriverManager.getConnection(dbUrl, dbUser, dbPwd);// 连接数据库，并且把权力给conn
+				System.out.print("数据库链接成功");
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+					"请将SQLServer JDBC4.0以上的驱动包复制到lib文件夹中。");
+			System.exit(-1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private Perparedstament() {
+
+	}
+
+//上面的是连接数据库
+
+	public static void main(String args[]) {
+		if(args.length!=5){
+			System.out.println("输入的参数个数不足");
+			exit(-1);
+		}
+		
+		String sno = args[0];
+		if(sno.length()>7){			
+			System.out.println("请输入七位以内的学号");
+		    exit(-1);
+		  }
+		
+		String sname = args[1];
+		
+		String sex = args[2];
+		if(sex.length()>3){			
+			System.out.println("请输入男或者女");
+		    exit(-1);
+		  }
+		
+		int  sage =Integer.parseInt(args[3]) ;	
+		
+		String sdept = args[4];
+		
+		
+
+		PreparedStatement pstmt = null; // statement具有很多处理数据库sql语句的方法，但是需要先得倒连接                                                   后的权限
+	try {
+			pstmt = conn.prepareStatement("insert into student values (?,?,?,?,?)");                                                                                                                  
+			pstmt.setString(1,sno);
+			pstmt.setString(2,sname);
+			pstmt.setString(3,sex);
+			pstmt.setInt(4,sage);
+			pstmt.setString(5,sdept);//指定五个参数
+		    pstmt.executeUpdate(); 
+		} catch (SQLException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		} // 通过连接创建(createStatement)一个语句对象,不是new
+		finally {
+			try {
+				if (pstmt != null)
+					pstmt.close();
+				pstmt = null;
+				if (conn != null)
+					conn.close();
+				conn = null;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private static void exit(int i) {
+		// TODO Auto-generated method stub
+		
+	}
+}
+
+
+四、用CallableStatement执行存储过程
+package Connection_java;
+
+import java.sql.*;
+
+import javax.swing.JOptionPane;
+public class TestCallableStatement {
+	protected static String dbClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";// SQL数据库引擎
+	protected static String dbUrl = "jdbc:sqlserver://localhost:1433;DatabaseName=students";// 数据源
+	protected static String dbUser = "kdbc";
+	protected static String dbPwd = "123456";
+	protected static String second = null;
+	public static Connection conn = null;
+	static {
+		try {
+			if (conn == null) {
+				Class.forName(dbClassName); // 创造一个“com.microsoft.sqlserver.jdbc.SQLServerDriver”的对象，并且向数据库注册，告知数据库连接
+				conn = DriverManager.getConnection(dbUrl, dbUser, dbPwd);// 连接数据库，并且把权力给conn
+				System.out.println("数据库链接成功");
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+					"请将SQLServer JDBC4.0以上的驱动包复制到lib文件夹中。");
+			System.exit(-1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	//上面是连接数据库
+
+	public static void main(String[] args) throws Exception {
+		CallableStatement cstmt = conn.prepareCall("{call p_StudentGrade4('计算机系',?)}");
+                //执行sql，未知参数用？占位
+		cstmt.registerOutParameter(1, Types.INTEGER);//定义第一个参数作为输出
+		cstmt.execute();
+		System.out.println(cstmt.getInt(1)); //输出
+		cstmt.close();
+		conn.close();
+	}
+
+}
+
+五、addBatch批处理，一次执行多条sql语句 例子：一次插入多条记录
+	public static void main(String[] args) throws Exception {	
+		//用Statement
+		Statement stmt = conn.createStatement();
+		stmt.addBatch("insert into student values (7657865,'曾增鑫','男',22,'计算机')");
+		stmt.addBatch("insert into student values (7657866,'吴嘉勉','男',21,'计算机')");
+		stmt.addBatch("insert into student values (7657867,'李子鸣','男',20,'计算机')");
+		stmt.executeBatch();
+		stmt.close();
+		
+		/*
+                //用PreparedStatement
+		PreparedStatement ps = conn.prepareStatement("insert into dept2 values (?, ?, ?)");
+		ps.setInt(1, 61);
+		ps.setString(2, "haha");
+		ps.setString(3, "bj");
+		ps.addBatch();
+		
+		ps.setInt(1, 62);
+		ps.setString(2, "haha");
+		ps.setString(3, "bj");
+		ps.addBatch();
+		
+		ps.setInt(1, 63);
+		ps.setString(2, "haha");
+		ps.setString(3, "bj");
+		ps.addBatch();
+		
+		ps.executeBatch();
+		ps.close();
+		*/
+		conn.close();
+
+	}
+
+}
+
+六必须一起执行的语句
+连接数据库-----参照上面
+public static void main(String args[]){
+		             Statement stmt = null;			
+				try {			
+					conn.setAutoCommit(false);  //***系统默认会自动提交，现在设置为手动则一条一条提交
+					stmt = conn.createStatement();
+					stmt.addBatch("insert into dept2 values (51, '500', 'haha')");
+					stmt.addBatch("insert into dept2 values (52, '500', 'haha')");
+					stmt.addBatch("insert into dept2 values (53, '500', 'haha')");
+					stmt.executeBatch();
+					conn.commit();
+					conn.setAutoCommit(true);
+				}  catch(SQLException e) {
+					
+					e.printStackTrace();
+					
+					try {
+						if(conn != null)
+						{
+							conn.rollback(); //任何一条抛出错误都会终止程序，并且返回执行前的状态
+							conn.setAutoCommit(true);//重新设置为自动提交
+						}
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}finally {
+					try {
+						if(stmt != null)
+							stmt.close();
+						if(conn != null)
+							conn.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+				
+
+			}
+
+七、可滚动的游标
+连接数据库----见上面
+	public static void main(String args[]) {
+		try {
+			Statement stmt = conn.createStatement(
+					ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);//设置为对游标不敏感，可以滚动
+			ResultSet rs = stmt
+					.executeQuery("select * from sc order by grade ");
+			rs.next();
+			System.out.println(rs.getString("Sno") +"  "+ rs.getString("cno")
+					+ rs.getInt("grade"));
+			rs.last();//跳到最后一行
+			System.out.println(rs.getString("Sno") + "  "+rs.getString("cno")
+					+ rs.getInt("grade"));
+			System.out.println(rs.isLast());//测试是不是最后一行
+			System.out.println(rs.isAfterLast());//测试是不是在最后一行后面的一行，用来遍历数据库
+			System.out.println(rs.getRow());//获得当前行数
+			rs.previous();//跳到前一行
+			System.out.println(rs.getString("Sno") +"  "+ rs.getString("cno")
+					+ rs.getInt("grade"));
+			rs.absolute(6);//调到第六行
+			System.out.println(rs.getString("Sno") + "  "+rs.getString("cno")
+					+ rs.getInt("grade"));
+			rs.absolute(1);//调到第一行
+			for(ResultSet s = rs;!(s.isAfterLast());s.next() ){
+			   System.out.println(rs.getString("Sno") + "  "+rs.getString("cno")
+						+ rs.getInt("grade"));
+			}//顺序遍历读出数据
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+}

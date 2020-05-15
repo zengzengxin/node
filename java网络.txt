@@ -1,0 +1,38 @@
+tcp 可靠的通信
+udp 不可靠通信
+java。net包里又连接两个程序（的电脑的地址）
+
+（tcp下）
+Socket类：创建一对象，将某个端口号作为传输数据的端口（端口不确定）
+Socket socket = new Socket("127.0.1",5888);//创建一个对象，将本机的某个端口与某个公网ip所对应的机器的5888端口连接
+socket.getInputStream();//连接后的输入流，通向连接这台机器的另一台机器的输出流
+socket.getInputStream();//连接后的输出流，通向连接这台机器的另一台机器的输入流
+
+ServerSocket 类：服务器端（被连接端）时时监听
+ServerSocket ss = new ServerSocket(5888);//将本机作为服务器，将5888端口作为一个时时监听的端口
+Socket socket = ss.accept();//接受别的机器连接5888端口
+
+InputStream is = null;
+is = socket.getInputStream();获取输入流
+ DataInputStream dis = new DataInputStream(is);在字节流上套接处理流
+dos.writeUTF("hey"); //utf网络传输方式很省空间，常用这个格式来进行网络传输
+
+两台机器连接过程为：
+1、服务器创建一个时时监听的端口
+2、客户端利用服务器公网ip和端口号连接服务器
+3、服务器发现有别的机子连接本机，通过accept方法接受连接
+4、可进行相互的数据传输
+
+
+（udp）下
+在udp下以数据组的方式发送数据，没有服务器和接收器的概念，发送的都是字节数组
+byte buf[] = new byte[1024];
+DatagramPacket dp = new DatagramPacket(buf, buf.length);//用数组buf来接收别的机器发送的包
+DatagramSocket ds = new DatagramSocket(5678);指定一个端口用来接收数据
+ds.receive(dp);用5678端口接收数据放到buf
+
+DatagramSocket ds = new DatagramSocket(9999);//指定本机端口用来发送数据
+DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddr("127.0.0.1",5678));//将数组buf发送到ip为127.0.0.1端口为5678的地方，
+ds.send(dp);//将数据通过9999发送到ip为127.0.0.1端口为5678的地方
+
+long类型数通过这个发送时先通过 bayarrayinputstream和datainputstream转化

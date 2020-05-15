@@ -1,0 +1,783 @@
+1、tomcat
+   tomcat基于jdk而生，在安装tomcat前需要安装jdk
+   然后安装tomcat
+
+
+2、tomcat默认的访问的端口是8080，可以通过修改bin/serlet.xml来修改端口
+
+3、安装好后将自己写的文件放在tomcat的webapps目录下
+
+4、每个webapps需要满足下面的条件--以test为例
+ 1、test下需呀有子文件夹WEB-INF
+ 2、WEB-INF下必须有文件web.xml和子文件夹classes
+ 3、classes用于存放写好的classes文件
+
+
+5、tomcat和额elicipse需要调用同版本的jdk 否则会不兼容
+
+6、每个webapps启动时顺序
+ 1、调用构造方法
+ 2、生成对象
+ 3、调用doget方法
+ 4、只要webapps不关闭就只存在唯一的一个对象，不再重新创造对象，这个对象一直持续到页面关闭
+ 5、结束时调用destory方法，将对象消除
+
+7、severlet主要的就是doget和dopost方法
+
+8、doget方式是直接提交，name值会跟在后面，并且最多只能几条2kb，而dopost方法比较安全  ，
+   而且提交字节的数目不限，dopost一班调用doget的方法来处理
+
+9、severlet可通过name值来获取用户在客户端form所填入的值，然后通过一系列处理
+下面是一个例子程序
+html部分
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>A sample show parameters</title>
+</head>
+<body bgcolor="#FDF5E6">
+	<form method="post" action="showcanshu" > 
+		
+		<!-- 个人信息 text -->
+		Item Number: <input type="text" name="itemNum" /><br/>
+		Quantity: <input type="text" name="quantity" /><br/>
+		Price each: <input type="text" name="price" value="$" /><br/>
+		First Name: <input type="text" name="firstname" /><br/>
+		Last Name: <input type="text" name="lastname" /><br/>
+		Middle Initial: <input type="text" name="initial" /><br/><br/>		
+		Shipping Address: <textarea rows="3" cols="40" style="vertical-align: sub;"></textarea><br/><br/>		
+		
+		<!-- 单选框 radio -->
+		Credit Card:<br/>
+		&nbsp;&nbsp;<input type="radio" name="carType" value="Visa"  checked="checked" />Visa<br/>
+		&nbsp;&nbsp;<input type="radio" name="carType" value="Master Card" />Master Card<br/>
+		&nbsp;&nbsp;<input type="radio" name="carType" value="Amex" />Amex<br/>
+		&nbsp;&nbsp;<input type="radio" name="carType" value="Discover" />Discover<br/>
+		&nbsp;&nbsp;<input type="radio" name="carType" value="Java SmartCard" />Java SmartCard<br/>	
+		
+		<!-- 密码输入框 password-->
+		Credit Card password:<input type="password" name="cardNum" /><br/>
+		Repeat Credit Card password:<input type="password" name="cardNum" /><br/><br/>
+		
+		<center><input type="submit" value="Submit Order"/></center>
+	</form>
+</body>
+</html> 
+
+
+服务器部分
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * 读取所有的参数 Reading All Request Parameters
+ * 
+ * @author Administrator
+ *
+ */
+public class showcanshu extends HttpServlet {
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		// 设置文档类型
+		response.setContentType("text/html;charset=utf-8");
+		//告诉浏览器器是什么格式
+		PrintWriter pw = response.getWriter();
+		//获得输出流
+		String title = "Reading All Request Parameters";
+
+		pw.println("<!DOCTYPE html>");
+		//向客户端写东西
+		pw.println("<html>");
+		pw.println("<head>");
+		pw.println("<title>读取所有参数</title>");
+		pw.println("</head>");
+		pw.println("<body bgcolor='#FDF5E6'>");
+		pw.println("<h1 align='center'>" + title + "</h1>");
+		pw.println("<table border=1 align=center>");
+		pw.println("<tr><th>Parameter Name<th>Parameter Value(s)</tr>");
+		/*
+		 * 1. request.getParameterNames()方法是将发送请求页面中form表单里所有具有name属性的表单对象获取(
+		 * 包括button).返回一个Enumeration类型的枚举.
+		 *  2. 通过Enumeration的hasMoreElements()方法遍历.再由nextElement()方法获得枚举的值.
+		 * 此时的值是form表单中所有控件的name属性的值.
+		 3.  最后通过request.getParameter()方法(返回的是String)获取表单控件的value值.request.
+		 * getParameterValues()方法(返回的是String[])
+		 */
+		Enumeration paramNames = request.getParameterNames();
+		//获取name所对应的属性，存放paramName里，是一个枚举类型
+
+		while (paramNames.hasMoreElements()) {
+               //通过hasMoreElements判断paramNames是否为空
+			String paramName = (String) paramNames.nextElement();
+			pw.println("<tr>\n<td>" + paramName + "</td>");
+            //request.getParameterValues(paramName)返回一个字符串数组
+			String[] paramValues = request.getParameterValues(paramName);
+			// value只有一个值时，通过paramName获得相应的值
+			if (paramValues.length == 1) {
+				String paramValue = paramValues[0];
+
+				if (paramValue.length() == 0) {
+					pw.println("<td><i>no value</i></td>");
+				} else {
+					pw.println("<td>" + paramValue + "</td></tr>");
+				}
+				// value有多个值时
+			} else {
+				pw.println("<td><ul>");
+
+				for (int i = 0; i < paramValues.length; i++) {
+					pw.println("<li>" + paramValues[i] + "</li>");
+				}
+				pw.println("</ul></td></tr>");
+			}
+		}
+		pw.println("</table>\n</body>\n</html>");
+	}
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+
+		doGet(request, response);
+	}
+}
+
+10、服务器与客户端采用的是无连接方式，在客户端请求服务器后，服务器采取短暂连接，然后将客户端所需要的内容发送给客户端，
+    并且将一些信息以text文件的方式写到客户端，这个text文件就是cookies
+
+11、设置cookies到客户端
+ 1、服务器可以向客户端写内容
+ 2、只能写文本文档
+ 3、客户端可以阻止服务器写入
+ 4、只能拿自己webapps写入的内容
+ 5、cookies分为两种
+   1属于窗口/子窗口--在窗口关闭后则消失
+   2属于文本 --在客户端存在一段时间
+ 6、一个servlet/jsp设置的cookies能被同一个路径下面或者子路径下面的servlet/jsp读到(路径 =   URL != 真实路径)
+ 7、常用的方法、  
+   一创建cookie：cookie cook = new cookie（key，value）;
+   二、添加cookie：respone.addcookie(cook);
+   三、读取cookie：cookie[] cook = request.getcookies();  
+   四、cookie.setMaxAge(3600);//设置其在客户端存在一小时3600秒
+   五、setvalue（） getvalue（），设置和获得已存在的cookie的值
+
+11、服务器向客户端写入cookie
+    public class writecookie extends HttpServlet{
+       protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException             {                
+                  //写入不设置时间的cookies
+                   Cookie cookie = new Cookie（"Session-Cookie-" + i, "Cookie-Value-S" + i);
+                   respondse.addCookie(cookie);
+                  //写入设置时间的cookie
+                   Cookie cookie = new cookie("persistent-Cookie-" + i, "Cookie-Value-P" + i);
+                   cookie.setMaxAge(3600);//设置其在客户端存在一小时3600秒
+                   response.addCookie(cooie);
+            }
+
+}
+
+12、从客户端读取cookies
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class getcookies extends HttpSeverlet{
+   protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {  
+         response.setContentType("text/html;charset=utf-8");
+         //设置客户端以什么格式读取文件
+         PrintWriter pw = response.getWriter();
+         //pw获取输出流，可以向客户端写出数据  
+         String title = "Active Cookies";
+		
+		pw.println("<!DOCTYPE html>");
+		pw.println("<html>");
+		pw.println("<head>");
+		pw.println("<title>读取客户端Cookies</title>");
+		pw.println("</head>");
+		pw.println("<body bgcolor='#FDF5E6'>");
+		pw.println("<h1 align='center'>" + title + "</h1>");
+		pw.println("<table border='1' align='center'>");
+		pw.println("<tr bgcolor='#FFAD00'>\n" + "<th>Cookie Name</th>\n" + "<th>Cookie Value</th></tr>");       
+
+         Cookie[] cookies = request.getCooie();
+         //读取客户端中自己webapps写入的cookie，放入数组
+　　　　　Cookie cookie;
+         for(iny i = 0 ;i<cookies.length();i++ ){
+             cookie = cookie[i];
+             pw.println(<tr>\n" + "<td>" + cookie.getName() + "</td>\n" + "<td>" + cookie.getValue() + "</td>\n</tr>");
+             
+         }
+         //利用循环遍历输出数组
+         pw.println("</table></body></html>");
+    }
+
+}
+
+
+13session
+ 1、session是保存在服务器的一块内存，这块内存专门为某个客户端使用，从浏览一个服务器开始就被创建，直到离开服务器时被关闭，
+    或者长时间不被使用时会关闭，用于当客户在多个页面跳转的时候，保存用户的状态。
+ 2 、每个session有自己的sessionID，sessionid独一无二，每次客户端发送请求的时候会夹带sessionid用于验证，服务器会验证
+     用于和相应的客户端对应，客户端有相应的sessionid与服务器对应
+ 3、session创建后知道客户端离开这个服务器才结束，或者离开这个项目，关闭所有页面，但是这个session不会立即消失，
+    有一定的时间期限
+ 3（2）session销毁有三种方法，1、调用invaluedate（）方法，2、超时 3、服务器被关闭
+ 4、若客户端的cookie允许被写，则服务器会把sessionID写入到窗口cookie中，
+ 5、若服务器不允许写入cookie则采用url重写方式（用respon.encodeURL("");
+ 6、同一个application下的servlet/jsp可以共享同一个session，前提是同一个客户端窗口
+ 7、超链接打开页面属于同一次会话 
+    未关闭所有页面打开同一个项目的新的页面属于同一次会话。
+    关闭本项目所有页面，重新打开这个项目的页面会创建新的session，原有的session仍然存在，只有超时或者销毁才消失
+8、一个客户端能够使用的session只有一个，能够往session里以key和value的方式设置多个键值对
+
+14、session的写入和控制
+   import java.io.IOException;
+   import java.io.PrintWriter;
+   import java.util.Date;
+   import javax.servlet.ServletException;
+   import javax.servlet.http.HttpServlet;
+   import javax.servlet.http.HttpServletRequest;
+   import javax.servlet.http.HttpServletResponse;
+   import javax.servlet.http.HttpSession;
+   public class SessionInfoServlet extends HttpServlet{
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // 如果会话已经存在，则返回一个HttpSession；这个session是独一无二的，如果session不存在才会创建一个新的
+        //session如果已经存在“mysession”只是为session重新换了一个名字，调用的还是那一个session       
+                HttpSession mysession = request.getSession(true);                 
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter pw = response.getWriter();
+		
+		//HTML 标签头部分
+		pw.println("<!DOCTYPE html>");
+		pw.println("<html>");
+		pw.println("<head>");
+		pw.println("<title>Session Info Servlet</title>");
+		pw.println("<head>");
+		pw.println("<body bgcolor='#FDF5E6'>");
+		
+		pw.println("<h3>Session Infomation</h3>");
+                pw.println("new Session:"+mysession.isNew()+"<br/>");
+                //判断Session是不是刚刚new出来的，如果是，就返回true，否则返回false
+
+                pw.println("Session ID:"mysession.getId+"<br/>");
+                //得到一个具有唯一性的SessionId（String类型）
+
+                pw.println("Session crate time:"+New Date(mysession.getLastAccessedTime())+"<br/>");
+                //获取创建这个session的时间
+
+		pw.println("Session Last Asscess time:"+New Date（mysession.getLastAccessedTime()）+"<br/>");
+                //获取关联Session的最后一次的时间
+
+                pw.println("new Session:"+mysession.isNew()+"<br/>");
+                pw.println("<h3>Request Infomation</h3>");
+
+                pw.println("Session Id Form Request:" + request.getRequestedSessionId() + "<br/>");
+                //返回客户端指定的sessionId
+
+                pw.println("Session Id Form Request:" + request.isRequestedSessionFormId() + "<br/>");
+                //判断Session是否来自于Cookie
+
+                pw.println("Session Id Form Request:" + request.isRequestedSessionFromURL() + "<br/>");
+                //判断Session是否来自于url重写
+
+                pw.println("Session Id Form Request:" + request.isRequestedSessionIdValid() + "<br/>");
+                //判断Session是否有效
+
+                pw.println("<a href=" + response.encodeURL("SessionInfoServlet")+ ">refresh</a>");
+                //通过包含这个Session来对指定的网址进行编码，或者，如果不需要编码，则返回该网址不变
+                  重要：通过这个方法重写url
+
+                pw.println("</body>");
+		pw.println("</html>");
+		
+		pw.close();a
+	}
+}
+
+14、（后来添加）application
+     1、 application相当于服务器中的一块公共内存，开始于服务器的启动，结束于服务器的关闭。
+     2、在用户的前后连接或不同用户之间的连接中，可以对application对象的同一属性进行操作。
+      在任何地方对application对象属性的操作，都将影响到其他用户对此的访问。
+     3、 getAttriute();   写入属性
+         steAttribute();  获取属性
+         getAttributeNames(); 返回枚举类型
+     4、格式setAttribute(”counter”,num);
+
+
+14、（后来添加）page对象
+     1、page对象相当于jsp页面本身
+     2、方法与object的一样，常用的有提string（）
+
+14（后来添加）pagecontext对象
+     1、集基本上所有对象的功能
+     2、有include方法，可包含其他页面
+     3、pagecontext.forward("reg.jsp")：跳转到其他页面
+     4、pageContext.include("reg.jsp")：包含其他页面
+14（后来添加）Exception对象
+    
+ 
+15、jsp的一些特性
+  1、jsp——java sever page
+  2、直接在html中内嵌jsp代码
+  3、jsp代码会先转化为servlet代码，然后再运行
+  4、第一次请求jsp时才会转化，以后都不需要，所以第一次会比较慢，以后就会变快
+  5、具有平台无关性
+
+16、jsp语法之declaration ——声明，全局变量与局部变量
+    1、成员变量的声明和相加
+       <%!
+          int account = 0; 
+          int add(int x ,int y){return x+y;}
+       %>
+    2、局部变量的声明
+   	<%
+           int account2 = 0;
+        %>	 
+    3、由于服务器从头到尾只产生一个对象，所以成员变量也只产生一个，而局部变量是在调用方法的时候才会执行，
+       所以局部变量没调用一次方       法就重新生成一次，跳出方法就无效。
+   
+	
+    4、测试程序
+       <%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JSP中的全局变量和局部变量</title>
+</head>
+<body>
+	<%!
+		// 全局变量
+		int accessCount1 = 0;
+	%>
+	<% 
+		// 局部变量
+		int accessCount2 = 0;
+	%>
+	
+	<h2>AccessCount:
+		<br/>Overall variable: <%= ++accessCount1 %>
+		<br/>Local variable: <%= ++accessCount2 %>
+	</h2>
+	
+</body>
+</html> 
+   
+   注：	访问同一页面，每刷新一次，accessCount增1，accessCount2不变（每次出现一个新的局部变量）。
+
+
+17、常识
+    1、"<% %>"两个百分号里面的东西全部是java的语法格式，也就是java代码，可以放入任何java代码
+    2、直接输出一个值 例如输出 account1，注意：他会先计算里面的值，然后转化为字符串，不能转化为字符串的不能输出.
+       <%= ++accessCount1 %>
+    3、注释
+       1、<%--....--%>：段注释
+          <%/*....*/%>：段注释
+          <%//....%>：行注释
+
+
+18、编译中执行的语句
+       <%@  %>
+    1、@page
+       1<%@page import="java.util.Date"%>
+          相当于java中引入某个包/类
+       2<%@ page errorPage="ErrorPage.jsp" %>
+          页面出错时跳转到哪里，如这里跳转到ErrorPage.jsp 
+       3<%@page isErrorPage="true" %>
+          告诉浏览器这是一个错误处理的页面，并且能够通过一些方法去获得和输出错误
+       4<%@page contentType="text/html;charset=utf-8" %>
+           指定页面的格式和编码      
+    2、@include指令 重要
+       1、<%@include file="fileURL" %><br/>如<%@ include file="date.jsp" %><br/>
+           <!-- 先将date.jsp的内容包含进来，再一起进行转换、编译和执行 -->
+           相当于直接把文件所对应的内容取下来放到这里，比较慢，编译成一个severlet
+           注意：因为是先包含进来，还不编译，所以一般用来包含静态页面，不适用于常需要传参数的页面
+       2、<jsp:include page="b.jsp" />//没有百分号  include动作
+          <!-- 先将date.jsp进行转换、编译和执行，再将结果包含进来 -->
+             但是不执行到这句话就不会去编译和执行，是在运行时执行的语法，比较快，编译成两个sevlet
+       3、运用<jsp:include page="b.jsp" />并且对他进行传参：注意：下面这一段内容属于jsp不属于java，所以不能用<%%>包含
+           <jsp:include page="divide.jsp" flush="true">
+		<jsp:param value="<%= value1 %>" name="v1"/> //传入参数到v1
+		<jsp:param value="<%= value2 %>" name="v2"/> //传入参数到v2
+	  </jsp:include>
+          
+        
+       注意
+          <jsp:include page="b.jsp" />（先执行，后包含）
+           此标签表示法：能动态区别加进来的是动态页面还是静态页面，可以传参数
+           对于静态页面则直接将资源包含(仅取其文本)。
+           对于动态页面则先处理各自资源，之后将处理过的结果包含在一起。 
+           <%@ include file="b.jsp">
+           此指令表示：静态地包含页面，不管其内容如何，不过是静态页面还是动态页面都首先将页面的内容先加进来。
+           然后一起处理，再将所有内容发给客户端。
+
+19、forward和Send.Redriect
+    1、forward：ex：forward页面有<jsp:forward page="forforward.jsp" />
+       jsp里的页面跳转方式之一，当页面访问含有forward的页面的时候，会带上参数自动跳转到他所指向的页面，如上面的      
+ <jsp:forward        page="forforward.jsp" />当页面访问forward时会自动跳转到forforward页面
+       注意：forward的跳转方式采用的是转发方式，即当一个页面请求带有forward的页面的时候，他会在客户端不知情的 情况下携带
+       客户端发来的请求跳转到另一个页面，故只有一次请求，请别参数可通过request传递
+       ps：页面自带参数跳转
+           	<jsp:forward page="forforward1.jsp" >
+		   <jsp:param value="m" name="name" />
+		   <jsp:param value='<%= request.getParameter("name") %>' name="oldName"/>
+		   <jsp:param value="manager" name="roles"/>
+	        </jsp:forward>
+    2、response.sendRedirect("forforward1.jsp");
+       跳转到forforward1.jsp，并且不携带参数
+       工作方式：当页面亲求带有sendRedirect的页面的时候，他会返回给客户端一个回应，让客户端重新去访问forforward1.jsp，      
+       但是客户端发来的参数会丢失，属于二次访问
+
+   3、两者的区别
+      forward是一次访问，并且携带参数，send.Redirect是二次访问，并且会丢失参数
+
+20、jsp：usebean，jsp访问运用java的classes文件，创建javabean和创建类一样，写在src文件夹里
+         jsp:useBean各项参数含义：
+       （1）javabean有几个要求，1、为公有类 2、必须有无参数的构造方法 3、里面的属性都是私有的 4、用get和set方法来设置里面的属性
+          如
+          public class Users {  //1、公有的类
+	  private String username;
+	  private String password;
+	  //私有的属性
+	public Users()
+	{
+		
+	}
+	//午餐的默认的构造方法
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	//get与set方法来设置属性	
+}   
+    
+     一、常用方法一
+     <jsp:useBean id="users" class="po.user"></jsp:useBean>
+     <jsp:setProperty property="*" name="users"/>
+     自动全匹配方法，页面提交过来的表单键值对，jsp运用users对象将获得的键值对自动与javabean中的私有属性进行匹配，
+     然后自动调用set方法进行赋值
+
+     二、指定匹配
+    <jsp:setProperty property="username" name="users"/>
+     自动全匹配方法，页面提交过来的表单键值对，jsp运用users对象将获得的键值对中的username与javabean中的私有属性username进行匹配，
+     然后自动调用set方法进行赋值
+
+     三、jsp、方式来获取表单内容
+    用户名：<jsp:getProperty property="username" name="users"/>
+
+	1. id 对象实例名称
+	2. scope Bean作用的范围，默认为page 对整个jsp页面有效
+	3. class Bean类名称
+	4. type Bean实例类型，可以是本类，或其父类，或实现的接口，默认为本类
+
+21、usebean具体过程
+    1、引入
+    2、创建实例
+    3、调用方法
+
+22、两种调用方式以及相互翻译，被jsp调用的类里最好写上get和set方法给get/setProperty
+    1、引入
+       <%@page import="bean.*" %>
+    2、创建对象 
+      <jsp:useBean id="cb" class="bean.CounterBean"></jsp:useBean>
+       等于
+      <%CounterBean cb = new CounterBean();%>
+
+    3、调用方法设置属性的值
+       <jsp:setProperty name="cb" property="count" value="25" />
+       等于
+       <%=cb.setCount(25) %>
+    4、调用方法去取出参数的值
+       <jsp:getProperty name="cb" property="count" />
+       等于
+       <%=cb.getCount()%> 
+    5、<jsp:setProperty name="cb" property="numItems" param="numItems" />
+       等于
+       <jsp::setProperty name="cb" property="numItems" value='<%= request.getParameter("numItems")%>'
+       等于
+      <%=cb.setCount(<%= request.getParameter("numItems")%>) %>
+      意思是：获得从客户端传过来的request里面的值让后传给bean
+
+  22、 以下是Bean的4种作用范围的测试： 
+       scope 各项参数的意义：
+	1. page 仅涵盖使用JavaBean的本页面  
+	2. request 有效范围仅限于使用JavaBean的请求，可以理解为夹带在request中，重定向不可获取，转发方法跳转可以获取
+	3. session 有效范围在用户整个连接过和中（整个会话阶段均有效），可以理解为写到了session中
+	4. application 有效范围涵盖整个应用程序。也就是对整个网站均有效，可以理解为将属性写到了application公共域中 
+           可用于作为首页访问量的计数器 
+ 
+  23、HTML页面输入内容，提交给JSP文件，JSP将这些内容存入JavaBean，再从JavaBean中拿出来显示。
+      中间有个中文乱码的处理问题。
+ 
+     ①SayHelloBean.html  
+
+   <html>
+     <head>
+        <title>数据输入</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=gb2312">
+     </head>
+    
+     <body bgcolor="#FFFFFF">
+        <div align="center" >
+            <p>请输入数据</p>
+                <form method="post" action="SayHelloBean.jsp" >//以post方法提交name和sex到SayHelloBean.jsp
+                    <p>姓名
+                        <input type="text" name="name">
+                        性别
+                        <select name="sex">
+                            <option value="先生">先生</option>
+                            <option value="女士">女士</option>
+                        </select>
+                    </p>
+                    <p>
+                        <input type="submit" name="Submit" value="提交">
+                    </p>
+                </form>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+         </div>
+      </body>
+   </html> 
+
+  ②SayHelloBean.jsp 
+
+   <%@page language="java" import="bean.HelloBean;" %>
+   <%@page contentType="text/html;charset=gb2312" %> 
+   <%--先将传过来的request中的字符编码格式设置成gbk，再取内容--%>
+   <% request.setCharacterEncoding("gbk"); %> //将客户端传过来的东西解析成gbk格式再取出，解决request传输出现中文乱码
+   <jsp:useBean id="hello" class="bean.HelloBean" scope="request" >
+    <%--通过*来设置所有属性和输入参数之间的关联，struts中大量运用--%>
+        <jsp:setProperty name="hello" property="*" />//获得request传递的name和sex，分别调用setname和setsex方法
+   </jsp:useBean>
+    
+   <html>
+     <head>
+         <title>HelloBean</title>
+         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+     </head>
+    
+     <body bgcolor="#FFFFFF">
+        <p>&nbsp;</p>
+        <p align="center" >
+            <font size="4">欢迎
+                <font color="#0000FF">
+                    <b>
+                        <%--转码(终结解决方案)：将hello对象中name属性的值用ISO8859_1编码格式以字节数组拿出，再转化成gbk格式---%>
+                        <%--= new String(hello.getName().getBytes("ISO8859_1"),"gbk")--%>
+                    </b>
+                </font>
+                <%--转码(终结解决方案)：将hello对象中sex属性的值用ISO8859_1编码格式以字节数组拿出，再转化成gbk格式---                %>
+                <%--= new String(hello.getSex().getBytes("ISO8859_1"),"gbk")--%>
+            </font>
+         </p>
+           <jsp:getProperty name="hello" property="name" />//调用getname
+           <jsp:getProperty name="hello" property="sex" />//调用getsex
+      </body>
+  </html> 
+
+  ③HelloBean.java 
+
+   package bean; 
+   public class HelloBean { 
+      private String name = "";
+      private String sex = "";
+    
+      public HelloBean() {}
+    
+      public String getName() {
+        return name;
+      }
+    
+      public void setName(String name) {
+        this.name = name;
+      }
+    
+      public String getSex() {
+        return sex;
+      }
+    
+      public void setSex(String sex) {
+         this.sex = sex;
+      }
+    
+   }
+
+
+23、jsp内置的九个对象及常用的方法
+    1、out 属于jspWriter类
+             println（）；向客户端输出各种类型的数据
+             newLine（）；向客户端输出一个换行符、
+             clear()；清楚缓冲区的内容，在flush后使用会抛出异常
+             close（）  ；关闭输出流
+             flush（）  ：输出缓冲区的数据
+             clearBuffer();		-- 清除缓冲区里的数据，同时把数据输出到客户端
+
+    2、request
+             getParament（String ParaName）：返回客户端向服务器发送的参数的值
+             getParamenterName（）   ；获得客户端传送给服务器端的所有参数的名字，结果是一个枚举类型数据（Enumeration）
+             getParamenterValues（String name）：获取request里指定参数的值   
+             getRequestDispatcher("reg_request.jsp").forward(request,response);与<jsp:forward>相同
+             getMethod(); 返回客户端向服务器端传送数据的方法
+             getRequestURL();					-- 获得以出请求字符串的客户端地址
+	     getRemoteAddr();					-- 获取客户端的IP地址
+	     getRemoteHost();					-- 获取客户端机器名称
+	     getServerName();					-- 获取服务器的名字
+	     getServletName();					-- 客户端所请求的脚本文件路径
+	     getServletPort();					-- 获取服务器端的端口
+             setAttribute();                                    --设置键值对
+             getAttribute（）;                                   --获取键值对的值
+             
+    3、response
+             addCooies（Cookie cookie）：向客户端添加一个cookie，要先new一个cookie，在调用这个方法写入客户端
+             SendRedirect（String URL）：跳转到另一个文件
+                 和<jsp:forward>的区别：
+				sendRedirect通过客户端以起二次申请，不同的request对象
+				jsp:forward是同一个request在服务器内部转发
+
+            setContentType(String contentType);		-- 设置MIME类型与编码方式
+	    addHeader(String name, String value);	-- 添加一个HTTP头信息，该Header信息将发送到客户端
+	    containsHeader(String name);	-- 判断指定名字的HTTP文件头是否存在
+	    sendError(int);		-- 向客户端发送错误信息 (404找不到文件 500内部错误)
+   
+   4、pageContext
+       
+   5、Session（用户浏览一个网站的时间就是一个session）
+         Session.SetAttribute(Sting name,object value)   向Session写东西
+         Session.getAttriute(String name  )              获取Session里的东西，返回值是Object 
+         boolean isNew();                                判断Session是不是刚刚创建
+         getCreateTime();
+         getSessionId();
+         setMaxInactiveInterval(10);                     设置session生存时间
+   6. application、
+         getAttriute();
+         steAttribute();
+
+  7. config		
+  8. exception
+  9. page
+
+24、sevelet和jsp的相互通信
+
+
+25 外界访问jsp分两种情况
+   1、访问未被访问过的jsp，jsp要转化为severlet，再调用jspsever（）方法，
+   2、不是第一次访问，则直接访问jsp转化过来的severlet字节文件，调用jspsever（）方法
+   3、jspsever（）方法采用多线程的方式，为每个访问建立一个线程
+
+26servlet是一段驻留在服务器的小程序，可以通过请求与响应的方法来调用
+
+
+27servlet必须继承与httpservlet（抽象方法）并且必须重写doget（）和dopost（）方法
+
+
+28、servlet执行的方式
+ 1、探寻xml文件。找到和请求过来的名字一样的url
+ 2、根据这个url找到物理地址、
+ 3、找到doget、或者dopost方法
+
+29、servlet、方法调用顺序
+  1、首先调用init构造方法方法实例化 
+  2、调用servlet（）方法
+  3、调用doget或者dopost（由上一个servlet方法来决定）
+  4、调用destory方法
+  5、源文件修改后tomcat会重新编译servlet。
+
+
+30、servlet与jsp的相互对应
+    jsp            servlet
+    out            response.getWriter
+    response       service中的response参数
+    resquest       service中的resquest参数
+    session        resquest.getSession()函数
+    application    getServletContest（）函数
+    exception      Throwable
+    page           this
+    pageContext    pageContext
+    Confing        getServletConfing函数 
+
+31servlet获取表单数据
+    1、创建实体类并被写set和get方法，用于接收传过来的数据
+    2、将传过来的数据写进实体类的一个对象里
+    3、将对象写入session
+    4、页面读取session来讲注册信息重新显示
+
+
+32、index.jsp与src下的包属于同级，写相对路径的时候需要注意
+    而xml中的url-pattern的/代表着根目录
+
+33、在项目开发的时候首先要将功能细化
+    然后为每个功能设计类（属性与方法）
+
+34、声明一个返回ArrayList<items>的方法（对象集合）
+    public ArrayList<items> getitems（）{}
+    
+   ArrayList<items>是一种以泛型方法实现的集合类型，items为一个任意类，Arraylist是一个集合，意味着存储着items对象的集合
+    可以存储多个对象
+    
+    声明一个items类型的ArrayList，可存储一个items类的对象的集合
+    ArrayList<items> list = new ArrayList<items>(); 
+
+    向list里添加一个item对象
+    items item = new items（）；
+    list.add(item);
+    
+    return list;
+
+    对list进行遍历
+    if(list!=null&&list.size()>0){
+                  for(int i=0;i<list.size();i++){ 
+                  System.out.println(list.size()) ;
+                  items item = list.get(i); //返回此列表中指定位置上的元素。 
+                  }
+    }
+
+35HashMap<items,Integer> goods 对象键值对，用于存储某一个物品存在几个，items为一个类，
+  Integer表示这个类对应特定的的对象有几个
+  
+  //加入对象
+   goods.put(items,number);
+
+  //遍历
+      for(Entry<items, Integer> entry: goods.entrySet())
+        {
+         System.out.println(key:entry.getKey()+ " Value: "+entry.getValue());
+         //getKey()调用内置ToString（）方法（可重写ToString），返回一串哈希码，getValue（）返回数量
+        }
+  //遍历2
+   Set<items> key = goods.keySet();//获取键的集合
+		Iterator<items> it = key.iterator();//获取迭代集合
+		while(it.hasNext()){
+			items i = it.next();
+			sum = sum + i.getPrice()*goods.get(i); //goods.get(i)获取商品的数量：goods有key和value
+			                                       // 传入key可得value
+		}
+
+  //一些特殊的方法
+    goods.get(obj); //返回该对象在集合里的数量
+
+         J.dialog.get({id: 'haoyue_creat',title: '购物成功',width: 600,height:400, link: '<%=path%>/servlet/CartServlet?id='+id+'&num='+num+'&action=add', cover:true});

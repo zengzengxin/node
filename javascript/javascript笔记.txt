@@ -1,0 +1,464 @@
+1、javascript 不支持自己创建数据类型
+
+2、typeof 可以检测数据类型和函数 alert（typeofbox）
+
+3、数据类型
+   undefined 表示没有初始化，但一个变量被创建却没有初始化的时候自动复制为undefined
+   null 派生与object表示没有存在，而不是表示为空
+   function是也是一种对象，但是可以用typeof来区分创建出来的对象和函数是非常有必要的
+   undefined 和 null 在数值上都为空，所以在数值上相等，但是他们的类型不一样undefined就是undefined类型，null就是null类型
+   undefined==null 为true undefined===null为false ===为恒等
+   NaN类型，表示本来要返回数值的情况下未能返回，比如说被 除数为0，本来要报错，但是JavaScript返回NAN就不报错
+   Number（）、parseInt（）、parseFloat（）、toString（）用于数据转化
+   object是一组数据和功能的集合
+
+4、函数
+   JavaScript在不写参数的情况下（不确定要几个参数）也可以传参，当然确定参数的情况下也可以直接写几个参数，在javascript里
+   每一个函数都有一个argument数组，里面存储着传来的所有参数，
+
+   JavaScript函数没有重载只有覆盖
+
+5object类型
+    object是一种引用类型，是一种数据结构，将数据和功能组合在一起，可以给object创建属性，也可以给object创建方法，在JavaScript
+    里没有类，object可以自行创建,也可以用作参数来传递，
+
+    
+    常用的字面量创建法
+    var box = {
+       name：'增鑫'
+       age:18
+       run:function(){
+         return name+age;
+       } 
+
+    }
+
+6、数组类型array
+   JavaScript里的数组类型的每一个元素可以存储任何类型的元素，而且数组大小会自己调整，也就是说数组里面除了可以存储别的语言
+   可以存储的东西外，还可以存储函数、对象、数组等东西
+  
+    创建数组
+    var box=['曾增鑫','18','学生','广东']
+
+    数组同时具有队列和栈的属性，
+    box.pudsh('18')表示进队或者压栈，就是把一个元素放到数组最后面
+    box.pop(),将第一个元素移除并且返回
+    box.shift()移除返回对头元素，
+    box.unshift()在队头添加元素，
+    
+   
+    数组也内置了一些排序方法
+    box.reverse()逆排序数组
+    box.sort()正排序数组
+    
+    数组操作方法
+    contanct、splice（） slice（）等要用的时候百度
+
+
+7、日期类型Date 根据早期的java.util.Date来构建，Date存储着1970年以来的毫秒数
+   var box = new Date()
+   box.getFullyear() 获取年
+   box.getMonth()   获取月
+   box.getHourse()  获取小时
+   box.getDate()  获取日
+   box.getMinutes() 获取分钟
+   box.getSeconds() 获取秒
+   box.getMilliseconds() 获取毫秒 
+
+8、函数
+   每个函数都有实例和方法，函数也是一种对象，一种变量，函数名是指向函数对象的指针，因此函数可以用于做参数，也可用于返回
+   
+   每个函数内置的属性
+   1、arguments  数组对象，里面存储着所有的参数
+   2、callee 这是一个存储着arguements所对应的函数，如arguement.callee()代表函数本身
+   3、this指向当前函数的作用域
+   4、call用于改变函数的作用域，第一个参数表示作用域，用于对象冒充
+
+
+9、变量以及作用域
+   1、在javascript中有两种内存、堆内存和栈内存
+      1、栈内存：每个大小固定，用于存放常量和引用类型的名字和地址
+      2、堆内存：每个大小不固定，可变，存放着引用类型的实体，大小可根据需要自我调整
+       （当调用引用类型的时候先到栈内存找地址 ，然后再堆内存取内容）
+   
+   2、基本类型有 undefined 、null、 boolean、number、 String
+  
+   3、在变量复制的时候，基本类型复制的是值本身，引用类型复制的是地址，因此不论谁改了实例里的属性，原引用和复制的引用
+      都会改变
+   
+    4、按值访问表示访问栈内存，先读栈内存找地址，然后访问堆内存叫按引用访问表示访问堆内存
+
+   5、javascript里所有参数都是按值传递的（切记）
+      1、如果参数是基本类型，则传入的是这个参数的值，如 var num = 100; box(num);传入的就是数字100，而不是名字num
+      2、如果参数是引用类型，则传入的数这个引用类型的栈内存的的地址，而不是把堆内存里的东西传入
+
+   6、instanceof 可以检测null undefined等，如 （a instanceof null）返回true或者false  常用
+
+   
+   7、window对象可以调用最外层的所有方法和属性 
+
+   8、javascript有自带的垃圾收集器，执行环境会给变量加上标记，然后变量使用时则去掉标记，没有去掉标记的变量视为准备删除的
+      变量，也可以将其赋值为null等待垃圾收集器清除
+
+
+10、内置对象
+    javascript自己定义好的对象，开发人员可以直接拿来使用的对象
+    
+    1、window对象：凡事全局的变量和属性都属于window对象，均可以通过window来调用
+
+    2、用encodeURIComponent（）来编码和数据，转化为utf-8的数据，用decodeURIComponent（）来解码（重要）
+
+    3、eval（）将字符串解析为javascript代码，如eval（'alert(box)'）;
+ 
+    4、Math对象里面有很多数学方法可以直接调用
+
+
+11、面向对象与原型
+    javascript是没有类的概念
+   
+    1、创建一个对象
+       var box = {
+          age：'18';
+          name:'曾增鑫'
+          function：run{
+            return age+name 
+          };
+        } 
+
+    2、工厂模式
+       function createobj{
+          var obj = new Object();
+          obj.age='18';
+          obj.name='曾增鑫';
+          obj.run= function(){
+             return age+name   
+          };
+         return obj;   
+       }
+      1、工厂模式创建出来的对象都是obj，无法区分是哪个对象的实例
+
+    3、构造方法
+       funtion Box(name,age){
+         this.name = name;
+         this.age = age;
+         this.run = function(){
+          return this.name+this.age;
+         
+         }
+      }
+
+       var box1 = new Box('zzx','100');
+
+      1、工厂方法采用函数里面创建对象然后返回对象，而构造方法采用外面创建对象（开创一片区域），然后把属性在函数里进行拼装
+         所以构造函数声明对象必须用new，所以每次声明的对象的地址都是唯一的，各不相同的，this则代表传入的对象的地址，
+         并且不同构造方法构造出来的东西各不相同，所以可以区分对象
+     
+      2、构造函数的首字母必须大写
+  
+  4、原型：（prototype）我们在创建每一个函数的时候都系统都会创造一个原型，这个原型是是属于函数的一块公共的内存，通过构造函数创造的对象可以访问他
+          的原型里存储和方法和属性，但是不能修改里面的方法和属性，因此可以把大家都需要的方法写在原型里，不必重复声明，
+          若是原型里和外面的实例里的属性相同，先找实例里的，然后才是找原型里的
+
+   
+  5、原型的创造方法，创建函数的时候，也创建了原型，以后该函数创建的每一个对象都有一个proto指针，用于指向该原型块，其实原型也相当于
+     一个对象
+
+  6、javascript中的继承是通过原型来完成的
+     如desk.prototype=new box():相当于把desk的原型指针指向了box的实例和原型块，从而实现了继承，但是这样继承调用父方法的时候无法传参
+     因此要用call方法来冒充父对象的作用域，然后传参，
+     如function desk（age）{
+         box.call(this,age)   //表示box在当前作用域下执行，
+       
+12、匿名函数与闭包
+   
+   1、匿名函数是没有名字的函数，闭包是一个里面的函数和属性都能够被访问的函数
+
+   2、匿名函数
+      function（）{
+        return ‘lee’;
+      }
+      
+      匿名函数的赋值
+      var box = function（）{ return ‘lee’}
+      匿名函数的调用 box（）
+
+   3、闭包：常见的创建闭包的方法：在一个函数里面创建另一个函数，通过这个函数去调用另一个函数
+      javascript不会提醒你是否多次重复声明了一个变量，会对后续的声明视而不见（当然声明并且赋值会改变原来的变量），所以要尽量减少
+      声明全局变量，避免命名冲突相互覆盖
+
+   
+   4、最常用的闭包写法
+     (function(){
+         var age = 100;
+         function run{
+          return '运行中' 
+         };
+         Box = function（）{}
+         Box.prototype.go=function{
+           return age+run();
+         };xsde3 
+        
+     })()
+      
+
+13、BOM
+    
+   1、window对象所带有的方法
+      alert（“”）；弹窗
+      confirm("");//弹窗，并且可以确认和取消
+      prompt();// 弹出一个text，输入内容可以获取
+      setTimeout(function(){},1000);// 超时调用，过了一段时间再调用；
+      setInterval(function(),1000);//  间歇调用，每过一秒调用一次；
+      innerWidth ;页面宽度
+      innerHeight;
+      outerWidth; 页面宽度+边框
+      outerHeight;
+
+   2、超时调用，返回值box是一个特定的id
+     var box = setTimeout(function(){
+	    alert("延迟一秒");
+	   
+      },1000);
+    通过id取消超时调用
+    claerTimeout(box);
+
+  3间歇调用
+   var box = setInterval(function(){
+	alert("每隔一秒执行一次");
+   },1000);
+
+   clearInterval(box);
+
+  4、超时模拟间歇
+     num = 0;
+     max = 5;
+  function box(){
+     num++;    //被间歇调用的部分
+     if(num>=5){
+        alert(“结束递归间歇调用”)
+     }
+      else{
+       setTimeout(box,1000);  递归
+     }
+   }
+
+  setTimeout(box,1000);
+
+
+   5、location对象记录着主机、端口、url、协议等内容
+
+
+   6、hstory记录着页面的历史记录
+
+
+14、DOM
+    D为web文档，o为对象，M为文档树形结构
+
+    1、把每一个标签当作一个节点，html就像一颗节点树
+       而每一个节点由--元素节点（如div）+属性节点（如tittle）+文本节点组成（div里面的文本）
+
+    2、DOM获取节点的方法
+       1、Document.getElementById('id') //通过id来获取元素节点
+       2、Document.getElementByTagName('元素的名字') //通过标签的类型来获取元素节点
+       3、Document.getElementByClassName('classname')//通过类名来获取元素节点
+       4、Document.getElementById('id').childNodes//获取该元素的子节点
+       5、Document.getElementById('id').parentNode//获取该元素的父亲节点
+       6、Document.getElementById('id').previousSibLing//获取哥哥节点
+       7、Document.getElementById('id').nextSiling//获取弟弟节点
+   
+    3、常用的一些方法
+       1、Document.getElementById('id').innerHtnl//  获取文字不区分并且转化html标签
+         (1-1)Document.getElementById('id').nodeValue//获取文字去掉保留html
+         (1-2)Document.getElementById('id').innerText//获取文字去掉html
+       2、Document.getElementById('id').value// 获取value值
+       3、Document.getElementById('id').getAttriute('id')//获取属性集合
+       4、Document.getElementById('id').setAttriute('id',box)//设置属性
+       5、Document.getElementById('id').removeAttribute('id','box')//移除属性
+       6、Document.write('<P>asdasdas<?P>')//向html写入文档
+       7、var p = Document.createElement('p')//创建元素p
+       8、Document.getElementById('id').appendChild(p)//在此元素后面加入p元素
+       9、var text = Document.createTextNode('段落')//p.appendChild(p)//在p后面加入文档
+       10、Document.getElementById('id').insertBefore(p)// 在前面嵌入元素
+       11、Document.getElementById('id').replaceChild(p)//替换元素
+       12、Document.getElementById('id').removeChild(p)//移除元素
+       13、box.style.width//获取行内css，
+       14box.style.width = '100px'//修改行内css
+       14、style = box.getComputedStyle(box,null);box.style.width//获取文件里的css，不允许修改
+
+
+
+
+
+
+15、获取元素的位置和尺寸
+    1、获取css文本上的尺寸
+       var box = document.getElementById('box');
+       var style = Window.getComputedStyle？Window.getComputedStyle(box,'null')：box.currentStyle;  获取style
+       style.width;
+       style.height;
+       
+
+    2、获取元素可视区的大小（包括内边距，不包括滚动条，外边距，边框）
+       box.clientWidth
+       box.clientHeight
+   
+    3、获取元素但实际大小（包含内边距、滚动条、边框）
+       box.offestWidth
+       box.offest.Height
+   
+    4、获取上下边距
+       box.offestLeft // 左边距
+       box.offestTop  //上边距
+
+
+    5获取元素与页面顶点的距离
+     var box = document.getElementById('box');
+     box.getBoundClientRect().top
+     box.getBoundClientRect().right
+     box.getBoundClientRect().bottom
+     box.getBoundClientRect().left
+
+
+16动态脚本
+    在适当的时候载入相应的脚本，如换肤
+    
+
+17事件：通过用户的一系列操作去执行代码
+     
+   1、一般过程
+      1、获取元素，
+      2、添加事件函数
+      3、把指定函数赋值给事件处理函数的时候不要加（）
+         box.onclick = box;
+
+   2、常见的事件
+      onclick
+      ondblclick
+      onfocus
+      onmousedown
+      onmouseup
+      onmouseover
+      onmouseout
+      onload   //当页面加载完毕后
+
+
+18、事件对象
+    1、对象.事件处理=函数    如box.onclick是一个函数
+  
+    2、var box = document.getElementById('box');
+       box.onclick=function(){
+         alert(this.value);          //这里的this就该表box（重要）
+       }
+
+    3、事件对象（称作event），event是浏览器生成的，并且作为参数传递过来
+       低版本ie和w3c有些出入，需要兼容
+
+    4、鼠标事件
+       event对象存在一个属性 button，当点击左键返回0中建为1右键为2
+       
+       //兼容ie 
+        function getButton（evt）{
+          var e = evt||window.event;//获取event，window.event低版本ie用
+          if(evt){
+              return e.button;
+           }
+           else{
+                switch(e.button){
+                 case:1
+                 return 0;
+                 case: 4
+                 return 1;
+                 case:2
+                 return 2;   
+               }
+             }
+         }    
+      
+       //打印鼠标键值
+        document.onmouseup = function(evt){
+             if(getButton(evt)==0){alert('左键')}；
+             if(getButton(evt)==1){alert('中键')}；
+             if(getButton(evt)==2){alert('右键')}； 
+        }
+
+     
+    5、键盘事件
+       键盘上每一个键都有对应的ascii码，可通过event的charCode属性去获得
+
+    6、冒泡与捕获
+       冒泡：事件从里向外执行（默认）
+       捕获：事件从外向里执行，就是从Document开始触发直到元素本身
+
+
+19事件的添加与移除
+     1、添加事件
+        window.addEventListener('click',function(){},false);
+         第一个参数click代表事件的名称，不加on
+         第二个参数表示当事件发生的时候要执行的函数，传入外部函数的时候记得不要加（）
+         第三个参数表示冒泡执行
+
+     2、移除事件
+        window.removeEventListener('click',function(){},false)
+         传参与添加事件的时候一样      
+
+20、表单处理
+    1、获取表单，可通过id class tanname name 等来获得
+
+    2、submit事件默认是绑定在form上面，而不是绑定在提交按钮上面，但是可以通过提交按钮来触发表单的提交事件
+       也就是说form.sumit();才有效
+
+    3、表单字段只包括 可以由用户输入数据或者单选复选框或者按钮等东西
+       fm = document.getElementById('myform');
+       fm.elements 得到所有表单控件
+       fm.element['user'] 得到name值为user的表单控件对象  
+       fm.elements['sub'].disabled; 禁用按钮
+       fm.element['user'].value;获取或者设置表单的值
+       fm.element['user'].focus;将光标定位在这个控件上
+       fm.element['user'].blur;将光标移除
+
+
+   4、表单事件
+      1、focus 获取光标时触发
+      2、change  修改内容并失去焦点的时候触发
+      3、blur    焦点移除时触发
+
+   5、下拉列表框
+      var city = fm.elements['city'] 
+      city.options                  //返回一个城市的集合
+      city.options[0].value        
+      city.options[0].text 
+      city.options[0].selected     //判断有没有被选中
+      var index = city.options[0].selectedIndex  //返回一个int值，表示被选中的那个选项的索引
+      city.options[index].value    //返回被选中的选项的value
+      city.options[index].text
+
+   
+    6、单选框复选框
+        var city = fm.elements['sex'] 
+       sex[i].select //判断是否被选中
+
+
+
+
+21、cookie是在客户端用很小的内存保存一些用户的数据，这些数据不要是账号密码这些数据，因为cookie不够安全
+    除此之外，在创建session后系统会将sessionid 写入cookie
+
+    1、document.cookie = 'user' = encodeuURIcompenent('曾增鑫')；
+       创建一个cookie，并且每次调用都会创建一个新的cookie
+
+    2、document.cookie 可以获得该网站在这个电脑上的所有cookie，可用expires = date 来设置cookie失效时间
+
+    3、cookie可以有多个，但是session只有一个，每次request.getsession()都是访问同一个session
+    
+
+22、json是一个字符串文件，里面存储着键值对，java可以通过读取json然后解析里面的内容，得到数据，
+    可用JSON.parse（box）来解析json对象。
+
+
+23、ajax用于在不刷新页面的情况下进行数据库操作，
+    200  请求正常
+    400  服务器识别不了
+    500  服务器意外错误，无法完成请求
+
+
+        

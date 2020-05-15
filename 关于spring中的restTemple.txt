@@ -1,0 +1,19 @@
+getForEntity() 发送一个HTTP GET请求，返回的ResponseEntity包含了响应体所映射成的对象
+第一个参数为url，
+第二个参数为返回值的类型如String.class
+最后一个参数是一个map，map的key即为前边占位符的名字，map的value为参数值
+
+getForObject() 发送一个HTTP GET请求，返回的请求体将映射为一个对象
+
+postForEntity()
+POST 数据到一个URL，返回包含一个对象的ResponseEntity，这个对象是从响应体中映射得
+到的
+
+postForObject() POST 数据到一个URL，返回根据响应体匹配形成的对象
+
+
+ ResponseEntity<Book> responseEntity = restTemplate.postForEntity("http://HELLO-SERVICE/getbook2", book, Book.class) 
+    方法的第一参数表示要调用的服务的地址
+    方法的第二个参数表示上传的参数，给目标方法的普通传参、
+    方法的第三个参数表示返回的消息体的数据类型
+    第四个参数表示由对方的{}接收

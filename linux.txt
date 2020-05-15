@@ -1,0 +1,277 @@
+ip addr          查看ip
+ifconfig         查看ip
+init 0           关机
+init 6           重启
+iptables -L      查看第一道防火墙是否关闭
+sestatus         查看第二道防火墙是否关闭
+cd               打开某个文件夹
+ls               查看当前文件夹下的所有文件
+rm -f +文件名     删除文件
+
+
+
+windows与linux进行文件传输，借助工具winscp
+
+远程连接借助smartty
+
+
+1、linux的基础命名（linux进入后是家目录，相当于桌面，进入根目录为cd \）
+ls                   （list）查看当前目录下的文件
+ls -a                 查看当前目录下所有文件包括隐藏文件
+cd                    切换目录或者直接回到家目录
+cd -                  在最近使用的两次目录间切换
+cd /或者cd ..         打开根目录  
+cd ..                 打开上一级目录
+pwd                   查看当前路径
+ctrl + c              强制中断当前操作，回到家目录
+clear                 清屏
+init 0                关机
+init 6                重启
+
+
+2、/目录下的一些目录的作用
+   /root 根目录，只有root角色才有这个目录，当使用root登陆后进入的就是这里
+   /mnt  测试目录
+   /home 普通用户的家目录，当我们为又为系统创建角色的时候，就会在home下创建一个相应的角色，普通用户登陆后进入这里
+   /temp 临时目录，用于做文件暂存（如上传文件，先放这儿，上传完毕后再删除）
+   /var  存放所有软件的日志
+   /boot 系统启动文件
+   /etc  放置所有的配置文件，有很多.conf，包括软件的
+   /bin  放所有用户都可以执行的程序（命令）
+   /sbin 放只有root才能执行的程序（命令）
+   /usr  放置用户自己的软件
+   /dev  存放硬件设备的地方
+   /media 用于挂载光盘
+
+
+3、一些常用的操作
+  1创建新用户并设置密码
+   useradd zzx  创建用户zzx
+   passwd  zzx  为zzx重新设置密码
+   123456
+   123456
+
+
+4、文件管理（file1 file2 均为文件）
+   新建文件     
+   touch + 文件名
+   
+   编辑文件     
+   vim + 文件名 ，按insert开始编辑 编辑完毕后按esc退出编辑，接着输入“：wq”表示保存并退出，“:q!”表示不保存退出 
+   
+   查看文件（不修改）
+   cat file1       
+
+   移动文件（相当于剪切和重命名）
+   mv file1 file2   //将file1 移到 file2 file1消失，相当于剪切
+
+   复制文件
+   cp file1 file22  //复制一份给file22 file1 还存在
+
+   删除文件
+   rm -rf file1
+
+   查找文件
+   find / -name httpd.conf  //从根路径下（"/"）查找名字为httpd.conf的文件
+    
+ 
+   在文件里面查找
+   cat file1 | grep -i sas  // 在file1里面查找sas 并且忽略大小写（-i）
+
+
+5 目录管理
+   创建目录
+   mkdir dir1 dir2 //创建目录 dir1 dir2 目录、mkdir=make directory
+
+   移动或者重命名目录
+   mv dir1 dir2
+
+   删除目录
+   rm -rf dir1 dir2
+
+   查看目录
+   ls
+
+   递归创建目录
+   mkdir -p a/b/c/d/f
+
+   递归查看目录
+   tree a
+  
+   将文件移到目录下
+   mv file1 file2 aaa/  //将file1 file2 移动到aaa下
+
+6用户管理（只有root 才有权力）
+   创建用户
+   useradd zzx  创建用户zzx
+   passwd  zzx  为zzx重新设置密码
+   123456
+   123456
+
+   查看用户
+   id zzx
+ 
+   删除用户
+   userdel -r zzx
+
+   设置密码
+   passwd  zzx
+
+7压缩文件与解压文件（注意在linux一定要使用zip不能用rar）
+  压缩文件
+  zip -r bbb.zip aaa
+
+  解压文件
+  unzip bbb.zip
+
+
+  对于于gz文件的压缩和解压
+  gz压缩
+  tar czf bbb.tar.gz aaa
+
+  gz解压
+  tar xzf bbb.tar.gz
+
+  gz查看
+  tar tf bbb.tar.gz
+
+
+8网络地址
+ 查看ip
+ ifconfig
+
+ 设置临时ip
+ ifconfig eth0 192.168.20.3  //设置临时ip eth0为网卡名
+
+ 设置永久ip
+ 到配置文件下改（etc/sysconfig/network-script/ifcfg-eth0），然后重启
+
+
+9shell技巧
+ 1tab自动补全（命令会自动补全）
+
+ 2 history 查看执行的目录
+
+ 3 !h 调用历史中最后一次以h开头的目录
+
+ 4 | 管道技术， 将前面所得和后面结合做查询，如 cat file1 | grep header 3 //将查询出来的结果看前三行
+  
+
+10获取帮助
+  在命令后面加 
+  --help他会列出这个命令的所有情框和参数
+  如
+  ls --help
+
+11关闭两道防火墙
+
+ iptables防护墙
+ 查看
+ iptables -L
+
+ 清空
+ iptables -F
+
+
+ 保存
+ service iptables save
+
+ 
+ selinux防火墙
+ 修改配置文件
+ vim /etc/selinux/config
+ SELINUX=disabled
+
+ 重启
+ init6
+
+12linux的启动过程中会自己载入系统，除此之外他还会自动执行一个脚本，这个脚本可以用来放自起软件，这个脚本的名字叫做rc.local,
+
+
+13yum安装卸载软件
+  在linux里面的每个安装包（rmp）是一个非常小的一个安装包，他们会相互依赖，要安装前可能会要先安装别的，因此yum会生成一个应用树，当你
+  用这个命令来安装东西的时候他会先把需要的依赖先安装上。
+
+  yum安装
+  yum -y install mysql
+
+  yum写在
+  yum -y remove mysql
+
+  查看yum仓库里面的所有东西
+  yum list
+
+
+14权限
+用户权限:（下面是linux里面对root下mnt文件的权限的说明）
+drwxr-x---  2 root root  4096 Jan 20 19:39 mnt
+
+drwxr-x---：在这是个字目中d表示文件夹 后面的九个字母三个一组，分别表示root root组 其他用户所拥有的权限
+rwx root对mnt目录具有读、写和执行的权限
+r-x root组内其他用户对mnt目录具有读和执行权限
+--- other其他所有用户对mnt目录没有任何权限
+
+r 读
+w 写
+x 执行
+
+用户:
+所有者 user u
+所属组 group g
+其他用户 other o
+u+g+o=a
+
+#目录的rwx
+r 查看目录里面的文件(4)
+w 在目录里创建或删除文件(2)
+x 切换进目录(1)
+
+#文件的rwx
+r 查看文件内容
+w 在文件里写内容
+x 执行该文件(文件不是普通文件，是程序或脚本)
+
+
+
+acl权限:
+1.查看mnt拥有的acl权限 
+getfacl -m mnt
+
+2.设置mnt的acl权限（对mnt目录拥有了rwt）
+setfacl -m u:user1:rwx mnt
+
+3.删除mnt的user1拥有的acl权限 
+setfacl -x u:user1 mnt
+
+4.删除mnt上所设置过的所有acl权限 
+setfacl -b mnt/
+
+
+
+
+spring:
+  application:
+    name: product
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: CONFIG
+      profile: dev
+  datasource:
+    url: jdbc:mysql://119.23.227.7:3306/cloud_sell?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka2:8762/eureka/
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    org.springframework.cloud.netflix.feign: debug
+
+

@@ -1,0 +1,58 @@
+1、json数据格式，都是key和value，value可以是，String 、number（int flost等等）、数组、对象、null 
+   
+   1、一个普通的json   
+   {
+      "name":"王小二",        //字符串
+      "age":25,               //number,不用双引号
+      "birthday":"1994-01-01",//不存在时间类型
+       "school":"蓝翔",       
+       "has_girlfriend":null,  //null无需双引号
+      "major":["挖掘机","理发"],//数组类 型
+       "car":{                  //对象
+               "name":"法拉利",
+                "price":100000000，
+              }，
+
+    }
+
+
+2、可将数据库中的数据取出放在arraylist中，然后同json-lib和其他一些jar包将数据转为json通过out.println()
+   方法传达给javascript或者jquery来处理（jar包放在了“笔记--json——jar”）
+   
+    1、将jar包放入lib目录下
+   
+   each循环遍历节点对象
+$.each($(‘.editor’),function(index,value){            
+  arr[index] = $(value).height();
+  $(value).height(150)     	        	
+$(value).next('.bottom').find('.up').hide();
+
+});
+
+//对于每个class为editor的元素，都执行函数,index为对应的索引，相当于数组下标
+ Value为对应的element元素节点，$(value)则为对应的jquery对象
+
+each循环遍历json对象
+$.each(json,function(index,value){
+html += '<h4>' + value.users + ' 发表于 ' + value.date + '</h4><h3>' + value.tittle + '</h3><div class="editor">' + value.content + '</div><div class="bottom">0条评论 <span class="down"> 显示全部  &nbsp&nbsp</span><span class="up"> 收起 </span></div><hr noshade="noshade" size="1" />';
+});
+
+
+
+
+
+
+
+
+后端发送json及jquery处理json的过程
+ 1、后端从数据库获取数据放入arraylist集合
+ 2、应用json-lib.Jar和其他一些jar包（放在lib下）来讲arraylist转为json数组
+ 3、通过out.Print()方法返回json
+ 4、juery通过         
+ $.ajax({
+       url: 'servlet/returnjson',
+       type:'POST',
+       success:function(response,status,xhr){   //response里面存着返回值
+        var json = $.parseJSON(response)；
+    });
+ 5、通过each循环遍历json

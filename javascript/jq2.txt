@@ -1,0 +1,70 @@
+十四章
+1字符串操作
+//$.trim()去掉字符串两边空格
+var str = '   jQuery ';
+alert(str);
+alert($.trim(str));
+
+2数组和对象操作
+ //$.each()遍历数组
+   var arr = ['张三', '李四', '王五', '马六'];
+   $.each(arr, function (index, value) {        //传两个参数，一个是数组名字，一个是函数，函数也有两个参数，第一个是数组下标index，从0开始，第二个是值                      
+	$('#box').html($('#box').html() + index + '.' + value + '<br />');//遍历
+   });
+
+//$.each()遍历对象
+$.each($.ajax(), function (name, fn) {        //传两个参数，一个是对象名字，一个是函数，函数也有两个参数，第一个是属性名，第二个是值
+   $('#box').html($('#box').html() + name + '.' + '<br /><br />');
+})
+
+//$.grep()数据筛选
+var arr = [5,2,9,4,11,57,89,1,23,8];
+var arrGrep = $.grep(arr, function (element, index) {  //传两个参数，一个是数组名字，一个是函数，第1个是值，函数也有两个参数，第2个是数组下标index从0开始
+                 return element < 6 && index < 5;  //值小于6并且下标小于5
+               });  
+alert(arrGrep);  //函数执行完毕返回数组
+
+// $.map()修改数组 
+var arr = [5,2,9,4,11,57,89,1,23,8];
+var arrMap = $.map(arr, function (element, index) {
+if (element < 6 && index < 5) {  //找到要改的
+    return element + 1;    //目标数组加一
+   }  
+});      
+alert(arrMap); //返回数组
+
+//$.inArray()获取查找到元素的下标
+var arr = [5,2,9,4,11,57,89,1,23,8];
+   var arrInArray = $.inArray(1, arr); //查找值为1的元素的下标，从0开始算
+    alert(arrInArray);  //返回一个数字
+
+//$.merge()合并两个数组
+var arr = [5,2,9,4,11,57,89,1,23,8];
+var arr2 = [23,2,89,3,6,7];
+alert($.merge(arr, arr2));
+
+//$.unique()删除重复的 DOM 元素
+<div></div>
+<div></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div></div>
+var divs = $('div').get();
+divs = divs.concat($('.box').get());
+alert($(divs).size());
+$.unique(divs);
+alert($(divs).size());
+
+
+//.toArray()合并多个 DOM 元素组成数组
+alert($('li').toArray());
+
+$.isArray(obj) 判断是否为数组对象，是返回 true
+$.isFunction(obj) 判断是否为函数，是返回 true
+$.isEmptyObject(obj) 判断是否为空对象，是返回 true
+$.isPlainObjet(obj) 判断是否为纯粹对象，是返回 true
+$.contains(obj) 判断 DOM 节点是否含另一个 DOM 节点，是返回 true
+$.type(data) 判断数据类型
+$.isNumeric(data) 判断数据是否为数值
+$.isWindow(data) 判断数据是否为 window 对象

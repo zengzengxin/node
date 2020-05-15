@@ -1,0 +1,148 @@
+1、jquery是javascript的一个库
+
+2、 jquery 的执行采用匿名函数的加载，只要把jquery的方法写在匿名函数里就会在dom加载完成后自动执行，并且
+    只是在加载的时候执行一次，并且将事件全部绑定在上面，然后事件触发的时候才执行对应的代码，但是不是全部
+    执行，所以用jquery重新添加的html元素需要重新进行事件的绑定，否则无法触发事件。
+    $(function(){
+
+
+    });
+    
+
+
+3、jquery语法，---先获取节点在执行方法
+       $(function(){
+          $('#box').css('color',red);
+   
+      });
+   1、$符号其实就等于jquery
+   2、jquery采用连缀的方式，每次返回的还是jquery对象
+   3、也可以将$用其他符号代替
+      jQuery.noConflict(); //将$符所有权剔除
+      var $$ = jQuery;
+   4、获取原生dom节点
+
+
+5、$('ul>li:nth-child(2)').css('color'):获取color
+   $('ul>li:nth-child(2)').css('color'，red)：设置color
+   $('ul>li').eq(0).css('color')
+
+6、jquery可以采用事件简写来调用事件
+   $('ul>li:nth-child(2)').click('color'，red)；
+
+
+7、事件委托，一个元素里面有很多相同的子元素，做同样的行为，（比如，点击后都弹窗），可以将事件委托给父元素
+   只用绑定一次，
+   
+   事件委托$('box').on('.button','click',function(){})
+   删除事件委托$('box').off('.button','click',function(){})
+
+   执行事件$('box').on('click',function(){})
+   删除事件$('box').off('click',function(){})
+
+
+   $('#box').get(0)  //规定get（0）返回的是原生的element节点
+
+
+
+8、动画效果
+   show（）  //相当于设置css为block
+   hide（）  //相当于设置css为none
+   toggle（） //可以在一个元素上自动实现切换
+   toggle（500，function（）{}）//两个参数为任选，可以自己选择传不传
+
+
+9、siledToggle（500，function（）{}）//上下滑动效果，两个参数任选
+
+
+10、自定义动画
+  
+   1、自定义同步动画 
+   $('box').click(function(){
+   
+        $('#test').animate({
+            'width' : '300px',
+            'height' : '200px',
+            'fontSize' : '50px',
+            'opacity' : 0.5
+        });
+
+    });
+  //test为一个div的id、这样实现的是同步动画，四个效果同时实现,animate()传的参数是一个匿名对象{}，里面写上键值对
+
+    2、自定义异步动画
+         
+   $('box').click(function(){
+   
+        $('#test').animate({
+            'width' : '300px',
+        })
+         .animate({'height' : '200px',})
+         .animate({'fontSize' : '50px',})
+         .animate({'opacity' : 0.5})；
+
+    });    
+   
+
+    3、设置速度和回调函数
+       $('test').animate({},1000,function(){});
+
+
+    4、如果要实现移动，则要配合position使用，现在元素的css里设置position：absolute；
+       然后
+       $('.animate').click(function () {
+          $('#box').animate({
+            'top' : '300px', //先必须设置 CSS 绝对定位
+            'left' : '200px'
+          });
+       });
+
+    5、$('#box').slideUp('slow').slideDown('slow').css('background', 'orange');
+        // 注意：如果动画方法，连缀可以实依次列队，而.css()方法不是动画方法，会在一开始
+         //传入列队之前。那么，可以采用动画方法的回调函数来解决。
+
+
+
+
+
+10、ajax异步提交，局部刷新，在不更新页面的情况下跟新页面，
+	//序列化表单然后提交
+	$('#pos').click(function(){
+		$.ajax({
+			type:"post",         //提价类型
+			url:"http://asdajhsdjakshdka.com",  //提交地址
+			data:$('form').serialize(),  //将表单序列化成键值对，并且自动编码，
+			success:function(response,status,xhr){   //提交成功后执行的方法，response为返回的数据，status为状态
+				                                    注意，response里面可以得到后台out对象，print的数据，如
+                                                                    json，true，false等
+			},
+			
+			error : function (xhr, errorText, errorStatus) {
+               alert(xhr.status + ':' + xhr.statusText);
+            }
+		});
+	});
+
+
+	//ajax加载提示，在加载的时候给点提示，方式因为网速太慢，导致用户不耐烦
+	  $(document).ajaxStart(function () {
+            $('.loading').show();            //加载ajax时执行
+       }).ajaxStop(function () {
+            $('.loading').hide();            //加载完ajax执行
+       });
+	
+   
+    //如果请求时间太长，可以设置超时
+    $.ajax({
+      timeout : 500
+    });
+    
+
+
+
+11、字符串操作函数
+    $.trim(str);
+
+
+
+12、

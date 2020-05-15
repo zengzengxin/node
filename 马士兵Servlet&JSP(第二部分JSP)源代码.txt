@@ -1,0 +1,946 @@
+***********************************************************************************************
+
+[学习笔记]马士兵 Servlet & JSP(第二部分JSP) Jonny 修改时间：2016/8/13
+
+***********************************************************************************************
+
+ JSP传统语法:
+ 1.Declaration	-- 声明
+ 2.Scriptlet	-- 程序段
+ 	通过 scriptlet 标签我们可以在 Jsp 里嵌入 Java 代码；
+		第一种：<%! %> 我们可以在里面定义全局变量、方法、类；
+		第二种：<% %> 我们可以在里面定义局部变量、编写语句；
+		第三种：<%= %> 我们可以在里面输出一个变量或一个具体内容；	
+ 3.Expression	-- 表达式
+ 4.Comment		-- 注释
+ 5.Directives	-- 编译指令
+ 	格式：<%@Directive属性="属性值"%>
+ 	1. page
+ 	2.inclue
+ 	3.taglib
+ 6.Action		-- 动作指令
+ 7.内置对象		
+ 
+ 
+1.最简单的JSP 
+HelloWorld.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>HelloWord</title>
+</head>
+<body>
+	<%
+		out.println("Hello Word!");
+		out.println(new java.util.Date());
+	%>
+</body>
+</html> 
+
+***********************************************************************************************
+
+2.JSP中的全局变量和局部变量 
+AccessCounts.jsp
+ 
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JSP中的全局变量和局部变量</title>
+</head>
+<body>
+	<%!
+		// 全局变量
+		int accessCount1 = 0;
+	%>
+	<% 
+		// 局部变量
+		int accessCount2 = 0;
+	%>
+	
+	<h2>AccessCount:
+		<br/>Overall variable: <%= ++accessCount1 %>
+		<br/>Local variable: <%= ++accessCount2 %>
+	</h2>
+	
+</body>
+</html> 
+测试结果：访问同一页面，每刷新一次，accessCount增1，accessCount2不变（每次出现一个新的局部变量）。
+
+***********************************************************************************************
+
+3.注释、当前页面从URL中取背景色参数 
+BGColor.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>注释、当前页面从URL中取背景色参数</title>
+</head>
+<!-- 可嵌套在注释里的JSP <%= new java.util.Date() %> -->
+
+<!-- HTML 注释 客户端可看见 -->
+
+<%--  JSP 注释 客户端不能看见 --%>
+<% 
+	// 单行注释
+	/*
+		多行注释
+	*/
+	
+	// 将请求中参数bgcolor的值拿过来，假如没有传这个参数，则值为null
+	// http://localhost:8080/test/BGColor.jsp?bgColor=lime  传参数URL示例
+	String bgColor = request.getParameter("bgColor");
+	boolean hasColor;
+	if(bgColor != null){
+		hasColor = true;
+	} else {
+		hasColor = false;
+		bgColor = "white";
+	}	
+%>
+<body bgcolor="<%= bgColor%>">	
+<h2 align="center">Color Testing</h2>
+<% 
+	if(hasColor){
+		out.println("You supplied a backgroud color of<span style='font-size: 24px'> " + bgColor + "</span>.");
+	} else {
+		out.println("Use Default backgroud color of<span style='font-size: 24px'> white</span>.");
+	}
+%>
+</body>
+</html> 
+
+***********************************************************************************************
+
+4.表达式 
+
+Expressions.jsp 
+
+<%@page import="java.util.Date"%>
+<%@page import="java.text.DateFormat"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JSP Expressions 表达式</title>
+</head>
+<body>
+	<h2>JSP Expressions</h2>
+	<ul>
+	<!-- 获取当前本地时间 -->
+		<li>Current Time: <%= new Date().toLocaleString() %></li>
+		<li>Current Time: <%= DateFormat.getDateTimeInstance().format(new Date()) %></li>
+		<li>Your HostName: <%= request.getRemoteHost() %></li>
+	<!-- 获取当前页面的Session Id -->	
+		<li>Your Session Id: <%= session.getId() %></li>
+		<li>The <code>testParam </code>from parameter: <%= request.getParameter("testParam") %></li>
+	</ul>
+</body>
+</html> 
+
+***********************************************************************************************
+
+5.@page指示语句的测试 
+
+TestDirective.jsp
+ 
+<%@page import="java.util.*" %>
+<%@page contentType="text/html;charset=utf-8" %>
+    <!--@page指示语句的测试-->
+    <!--将当前系统时间转变成我们本地常用的形式输出-->
+<%= new Date().toLocaleString() %>
+<br><br>
+<%
+    out.println("你好！"); 
+%> 
+
+***********************************************************************************************
+
+6.错误页跳转测试
+ 
+①TestErr.jsp
+ 
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+ <%@ page errorPage="ErrorPage.jsp" %>
+  <!-- 本页面发生错误会跳转到ErrorPage.jsp页面 -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>出错则跳转到ErrPage.jsp页面</title>
+</head>
+<body>
+	<%
+		String str = "123abc";
+		int i = Integer.parseInt(str);
+		out.println("str= " + str + ", i = " + i);
+	%>
+</body>
+</html> 
+
+②ErrPage.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+ <%@ page isErrorPage="true" %>   
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>错误信息显示页</title>
+</head>
+<body text="red">
+	<!-- 错误提示信息 -->
+	错误信息：<%= exception.getMessage() %>
+</body>
+</html>
+
+***********************************************************************************************
+
+7.include指令”%@ include file“和include动作指令“jsp:include page” 
+前者是先包含进来再编译执行；后者是先各自编译执行再包含进来
+ 
+①include.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<font>
+		The current time and date are:<br/>
+	<!-- 先将date.jsp的内容包含进来，再一起进行转换、编译和执行 -->	
+		<b>%@ include file="..jsp":</b>	<br/>
+		<%@ include file="date.jsp" %><br/>
+		
+	<!-- 先将date.jsp进行转换、编译和执行，再将结果包含进来 -->		
+	<b>jsp:include page="..jsp":</b><br/>	
+		<jsp:include page="date.jsp" flush="true" />
+		
+	</font>
+</body>
+</html>
+ 
+②date.jsp
+ 
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.DateFormat" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>  
+ <%= DateFormat.getDateTimeInstance().format(new Date()) %>
+
+
+jsp中两种包含文件的区别： 
+相同点：两者逗能包含一个页面
+不同点：
+区别1：
+<jsp:include page="b.jsp" />（先执行，后包含）
+此标签表示法：能动态区别加进来的是动态页面还是静态页面
+对于静态页面则直接将资源包含(仅取其文本)。
+对于动态页面则先处理各自资源，之后将处理过的结果包含在一起。 
+<%@ include file="b.jsp">
+此指令表示：静态地包含页面，不管其内容如何，不过是静态页面还是动态页面都首先将页面的内容先加进来。
+然后一起处理，再将所有内容发给客户端。
+实例挑战：
+有b.jsp页面
+<%int i = 10 ;%>
+<%=i%>
+主界面a.jsp也有<%int i = 100 ;%>        <%=i%>
+如果是加载<%@ include file="b.jsp">，则是先包含后执行，就会发现报错，i被重新定义，
+但如果是加载<jsp:include page="b.jsp" />则是先执行结果，然后将结果包括到主页面。不会报错。
+区别2：
+<jsp:include page="b.jsp" />可以分开写成：
+<jsp:include page="b.jsp" >
+<jsp:param name="参数名" value="参数值"/>
+</jsp:include>
+这样就可以传递参数。 
+
+***********************************************************************************************
+
+8.两个数的乘除运算 
+
+①Compute.html 
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>两个数的乘除运算</title>
+</head>
+<body bgcolor="#FDF5E6">
+<div align="center">
+	<form method="post" action="Compute.jsp">	<!-- action 动作指令 -->
+		<p>请选择需要的算法:
+			<input type="radio"  name="compute" value="division" checked="checked" />除法
+			<input type="radio"  name="compute" value="multiplication" />乘法
+		</p>
+		<p>被除数（乘数）
+			<input type="text" name="value1" />	
+			除数（乘数）
+			<input type="text" name="value2" />			
+		</p>
+		<p>
+			<input type="submit" name="Submit" value="计算结果" />
+		</p>
+	</form>
+</div>
+</body>
+</html> 
+
+②Compute.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<% 
+	// 将Compute.html页面输入的要进行计算两个变量拿过来
+	String value1 = request.getParameter("value1");
+	String value2 = request.getParameter("value2");
+%>
+
+<% if("division".equals(request.getParameter("compute"))) { %>
+	<!-- 进行除法计算，把两个参数v1、v2先传到divide.jsp再在那边编译运行，然后把结果拿到这边显示 -->
+	<jsp:include page="divide.jsp" flush="true">
+		<jsp:param value="<%= value1 %>" name="v1"/>
+		<jsp:param value="<%= value2 %>" name="v2"/>
+	</jsp:include>
+<% } else { %>
+	<!-- 直接把multiply.jsp拿过来，跟本页面一起编译 -->
+	<%@include file="multiply.jsp" %>
+<% }%>
+
+
+③multiply.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Multiply</title>
+</head>
+<body bgcolor="#FDF5E6">
+<h1 align="center">
+	<%
+		try{
+			float multiplticand = Float.parseFloat(request.getParameter("value1"));
+			float multiplticator = Float.parseFloat(request.getParameter("value2"));
+			double result = multiplticand * multiplticator;
+			out.println(multiplticand + " * "+ multiplticator + " = " + result);
+		} catch(Exception e){
+			out.println("不合法的乘数或被乘数！");
+		}
+	%>
+</h1>
+</body>
+</html> 
+
+④divide.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Divide</title>
+</head>
+<body bgcolor="#FDF5E6">
+<h1 align="center">
+<%
+	try{
+		float divident = Float.parseFloat(request.getParameter("v1"));
+		float divisor = Float.parseFloat(request.getParameter("v2"));
+		double result = divident/divisor;
+%>
+		<%= result %><br/>
+<%
+	out.println(divident + "/" + divisor + "=" + result);
+	} catch(Exception e){
+		out.println("不合法的除数或被除数！");
+	}
+%>
+</h1>
+</body>
+</html> 
+
+***********************************************************************************************
+
+9.jsp:forward和response.sendRedirect 
+①最简单的jsp:forward 
+
+forward.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>最简单的jsp:forward</title>
+</head>
+<body>
+	Welcome to forward.jsp
+	<!-- 直接跳转到了forforward.jsp页面 -->
+	<jsp:forward page="forforward.jsp" />
+</body>
+</html>
+ 
+forforward.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>最简单的jsp:forward</title>
+</head>
+<body bgcolor="#FDF5E6">
+	Welcome<br/>
+	Here is forforward.jsp
+</body>
+</html> 
+
+②jsp:forward和response.sendRedirect的比较
+ 
+forward1.jsp 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>最简单的jsp:forward</title>
+</head>
+<body>
+	Welcome to forward.jsp
+	<!-- 直接跳转到了forforward1.jsp页面 -->
+	<jsp:forward page="forforward1.jsp" >
+		<jsp:param value="m" name="name" />
+		<jsp:param value='<%= request.getParameter("name") %>' name="oldName"/>
+		<jsp:param value="manager" name="roles"/>
+	</jsp:forward>
+</body>
+</html>
+ 
+forforward1.jsp：和forward1.jsp使用的是同一个request（服务器跳转） 
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>最简单的jsp:forward</title>
+</head>
+<body bgcolor="#FDF5E6">
+	Welcome<br/>
+	Here is forforward1.jsp<br/>
+	
+	<%= request.getParameter("name") %><br/>
+	<%= request.getParameter("oldName") %><br/>
+	<%= request.getParameter("roles") %><br/>
+	<%= request.getParameter("address") %><br/>
+</body>
+</html> 
+测试结果：
+访问http://localhost:8080/test/forward/forward1.jsp?name=yyg&address=34527144231
+结果：
+Welcome
+Here is forforward1.jsp
+m yyg manager 34527144231 
+此时页面URL还是forward1.jsp，并没有跳转到forforward1.jsp，给用户的感觉还是刚才的页面在为自己服务。
+说明：m 和manager 是forward1.jsp中传过来的；而yyg 和34527144231 是在URL中通过request传过来的。并且forward1.jsp中也没有address属性，这也从另一个角度说明了这两个jsp使用的是同一个request。 
+
+test.jsp：和forward1.jsp使用的是不同的request
+说明：访问过http://localhost:8080/test/forward/test.jsp后，页面跳转成http://localhost:8080/test/forward/forforward1.jsp
+这个过程中客户和服务器之间产生了两个request，并且test.jsp后跟参数并不能传递到forforward1.jsp（原因也很明显：两次是不同的request） 
+<%
+    response.sendRedirect("forforward1.jsp");
+%> 
+
+***********************************************************************************************
+
+10.jsp:useBean 
+jsp:useBean各项参数含义：
+	1. id 对象实例名称
+	2. scope Bean作用的范围，默认为page 对整个jsp页面有效
+	3. class Bean类名称
+	4. type Bean实例类型，可以是本类，或其父类，或实现的接口，默认为本类
+
+①CounterBean.java 
+
+package bean; 
+import java.io.Serializable; 
+/**
+ * 一个很普通的JavaBean
+ * @author jukey
+ *
+ */
+public class CounterBean implements Serializable {
+    
+    private int count = 0; 
+    public CounterBean() {} 
+    public int getCount() {
+        count++;
+        return count;
+    } 
+    public void setCount(int count) {
+        this.count = count;
+    }
+} 
+
+②test.jsp:JSP往JavaBean中设置值，从JavaBean中拿值 
+
+<%@page import="bean.*" %> 
+<%--
+<%
+    // 下面这个语句等同于<jsp:useBean id="cb" class="bean.CounterBean"></jsp:useBean>
+    CounterBean cb = new CounterBean();
+%>
+--%> 
+<jsp:useBean id="cb" class="bean.CounterBean">
+</jsp:useBean> 
+<font color="red" size="5">
+    <%--将bean中存储的值拿出来--%>
+    <%= cb.getCount()%>
+</font> 
+<!--往bean中存值-->
+<jsp:setProperty name="cb" property="count" value="25" />
+    <%--cb.setCount(25)--%>
+    
+<!--往bean中取值-->
+<jsp:getProperty name="cb" property="count" />
+    <%--cb.getCount()--%> 
+
+以下是Bean的4种作用范围的测试： 
+scope 各项参数的意义：
+	1. page 仅涵盖使用JavaBean的页面  
+	2. request 有效范围仅限于使用JavaBean的请求
+	3. session 有效范围在用户整个连接过和中（整个会话阶段均有效）
+	4. application 有效范围涵盖整个应用程序。也就是对整个网站均有效 可用于作为首页访问量的计数器 
+
+③page有效（仅涵盖使用JavaBean的页面）
+ 
+PageBean.jsp 
+
+<jsp:useBean id="counterBean" scope="page" class="bean.CounterBean" />  
+<html>
+    <body>
+        <h3>CounterBean scope="page" Example</h3>
+        <b>count:</b> <%= counterBean.getCount()%>
+    <%--上下两句效果一样--%>
+        <jsp:getProperty name="counterBean" property="count"/>
+    </body>
+</html>
+ 
+④request有效（有效范围仅限于使用JavaBean的请求）
+ 
+RequestBean.jsp 
+
+<jsp:useBean id="counterBean" scope="request" class="bean.CounterBean" />    
+<%--
+	// 这一段java代码等同于上面这句JSP语句
+    bean.CounterBean counterBean = request.getAttribute("counterBean");
+    if(counterBean == null) {
+        counterBean = new bean.CounterBean();
+        request.setAttribute("counterBean",counterBean);
+    }
+--%>    
+<html>
+    <body>
+        <h3>CounterBean scope="request" Example</h3>
+    <!--往当前request对应的bean中设置-->
+        <% counterBean.setCount(100); %>
+        <%--和RequestBean2.jsp用的是同一个request，也是同一个counterBean对象--%>
+            <!--测试结果是101-->
+        <jsp:forward page="RequestBean2.jsp" /> 
+            
+            <%--和RequestBean2.jsp用的不是同一个request，也不是同一个counterBean对象--%>
+                <!--访问RequestBean.jsp，跳转到RequestBean2.jsp，因为和当前request不是同一个request-->
+                <!--则产生一个新的request，产生一个新的bean对象，测试结果是1而不是101-->
+        <%-- response.sendRedirect("RequestBean2.jsp"); --%>
+    </body>
+</html> 
+
+RequestBean2.jsp 
+
+<jsp:useBean id="counterBean" scope="request" class="bean.CounterBean" />    
+<html>
+    <body>
+        <h3>CounterBean scope="request" Example</h3>
+        <b>count:</b> <%= counterBean.getCount()%>
+    </body>
+</html> 
+
+⑤Session有效（有效范围在用户整个连接过程中，整个会话阶段均有效）
+ 
+SessionBean.jsp 
+
+<jsp:useBean id="counterBean" scope="session" class="bean.CounterBean" />
+    
+<%--
+    // 这一段java代码等同于上面这句JSP语句
+    bean.CounterBean counterBean = session.getAttribute("counterBean");
+    if(counterBean == null) {
+        counterBean = new bean.CounterBean();
+        session.setAttribute("counterBean",counterBean);
+    }
+--%> 
+<html>
+    <body>
+        <h3>CounterBean scope="session" Example</h3>
+        <b>count:</b> <%= counterBean.getCount()%>
+    </body>
+</html> 
+
+SessionBean2.jsp 
+
+<jsp:useBean id="counterBean" scope="session" class="bean.CounterBean" />
+    
+<html>
+    <body>
+        <h3>CounterBean scope="session" Example</h3>
+        <b>count:</b> <%= counterBean.getCount()%>
+    </body>
+</html> 
+  
+⑥application有效（有效范围涵盖整个应用程序，也就是对整个网站都有效）
+可用于作为首页访问量的计数器 
+
+ApplicationBean.jsp 
+
+<jsp:useBean id="counterBean" scope="application" class="bean.CounterBean" />
+    
+<html>
+    <body>
+        <h3>CounterBean scope="application" Example</h3>
+        <b>count:</b> <%= counterBean.getCount()%>
+    </body>
+</html> 
+
+ApplicationBean2.jsp 
+
+<jsp:useBean id="counterBean" scope="application" class="bean.CounterBean" />
+    
+<html>
+    <body>
+        <h3>CounterBean scope="application" Example</h3>
+        <b>count:</b> <%= counterBean.getCount()%>
+    </body>
+</html> 
+
+***********************************************************************************************
+
+11.jsp:setProperty和jsp:getProperty
+ 
+①SaleEntry.jsp 
+
+<html>
+    <head>
+        <title>Using jsp:setProperty</title>
+    </head>
+    <!--销售条目（单行：商品编号、单价、数量、总价）-->
+    <body>
+        <table border=5 align="center" >
+            <tr><th class="title">
+                Using jsp:setProperty
+        </table>
+        
+        <jsp:useBean id="entry" class="bean.SaleEntry" />
+        
+        <%--从JSP向JavaBean中设值--%>    
+<!--通过param指定表单元素的名称，通过property指定bean的属性名称，由此建立两个变量的关联-->
+        <jsp:setProperty name="entry" property="itemID" value='<%= request.getParameter("itemID")%>' />
+        <jsp:setProperty name="entry" property="numItems" param="numItems" />
+        <jsp:setProperty name="entry" property="discountCode" param="discountCode" />
+                    
+        <br>
+        
+        <table border=1 align="center" >
+            <tr class="colored">
+                <th>Item ID<th>Unit Price<th>Number Ordered<th>Total Price
+            <tr align="right">
+                <%--Jsp从JavaBean中取值--%>
+                <td><jsp:getProperty name="entry" property="itemID" />
+                <td>$<jsp:getProperty name="entry" property="itemCost" />
+                <td><jsp:getProperty name="entry" property="numItems" />
+                <td>$<jsp:getProperty name="entry" property="totalCost" />
+        </table>
+    </body>
+</html> 
+
+②SaleEntry.java 
+
+package bean; 
+public class SaleEntry {
+    
+    private String itemID = "unknown";
+    // 折扣
+    private double discountCode = 1.0;
+    private int numItems = 0;
+    
+    public double getDiscountCode() {
+        return discountCode;
+    }
+    
+    public void setDiscountCode(double discountCode) {
+        this.discountCode = discountCode;
+    }
+    
+    public String getItemID() {
+        return itemID;
+    }
+    
+    public void setItemID(String itemID) {
+        this.itemID = itemID;
+    }
+    
+    public int getNumItems() {
+        return numItems;
+    }
+    
+    public void setNumItems(int numItems) {
+        this.numItems = numItems;
+    }
+    
+    // 获取单价
+    public double getItemCost() {
+        double cost;
+        if("a1234".equals(itemID)) {
+            cost = 12.99 * getDiscountCode();
+        } else {
+            cost = -99;
+        }
+        return roundToPennies(cost);
+    }
+    
+    // 计算到分位
+    public double roundToPennies(double cost) {
+        return (Math.floor(cost * 100) / 100.0);
+    }
+    
+    // 计算总价格
+    public double getTotalCost() {
+        return (getItemCost() * getNumItems());
+    }
+    
+} 
+
+***********************************************************************************************
+
+12.HTML页面输入内容，提交给JSP文件，JSP将这些内容存入JavaBean，再从JavaBean中拿出来显示。
+中间有个中文乱码的处理问题。
+ 
+①SayHelloBean.html  
+
+<html>
+    <head>
+        <title>数据输入</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=gb2312">
+    </head>
+    
+    <body bgcolor="#FFFFFF">
+        <div align="center" >
+            <p>请输入数据</p>
+                <form method="post" action="SayHelloBean.jsp" >
+                    <p>姓名
+                        <input type="text" name="name">
+                        性别
+                        <select name="sex">
+                            <option value="先生">先生</option>
+                            <option value="女士">女士</option>
+                        </select>
+                    </p>
+                    <p>
+                        <input type="submit" name="Submit" value="提交">
+                    </p>
+                </form>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+        </div>
+    </body>
+</html> 
+
+②SayHelloBean.jsp 
+
+<%@page language="java" import="bean.HelloBean;" %>
+<%@page contentType="text/html;charset=gb2312" %> 
+<%--先将传过来的request中的字符编码格式设置成gbk，再取内容--%>
+<% request.setCharacterEncoding("gbk"); %> 
+<jsp:useBean id="hello" class="bean.HelloBean" scope="request" >
+    <%--通过*来设置所有属性和输入参数之间的关联，struts中大量运用--%>
+        <jsp:setProperty name="hello" property="*" />//传递了name和sex过来
+</jsp:useBean>
+    
+<html>
+    <head>
+        <title>HelloBean</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    </head>
+    
+    <body bgcolor="#FFFFFF">
+        <p>&nbsp;</p>
+        <p align="center" >
+            <font size="4">欢迎
+                <font color="#0000FF">
+                    <b>
+                        <%--转码(终结解决方案)：将hello对象中name属性的值用ISO8859_1编码格式以字节数组拿出，再转化成gbk格式---%>
+                        <%--= new String(hello.getName().getBytes("ISO8859_1"),"gbk")--%>
+                    </b>
+                </font>
+                <%--转码(终结解决方案)：将hello对象中sex属性的值用ISO8859_1编码格式以字节数组拿出，再转化成gbk格式---%>
+                <%--= new String(hello.getSex().getBytes("ISO8859_1"),"gbk")--%>
+            </font>
+        </p>
+        <jsp:getProperty name="hello" property="name" />
+        <jsp:getProperty name="hello" property="sex" />
+    </body>
+</html> 
+
+③HelloBean.java 
+
+package bean; 
+public class HelloBean { 
+    private String name = "";
+    private String sex = "";
+    
+    public HelloBean() {}
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getSex() {
+        return sex;
+    }
+    
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+    
+} 
+
+***********************************************************************************************
+
+JSP 九个内置对象：
+	1. out
+		println();			-- 向户端输出各种类型数据
+		newLine();			-- 输出一个换行符
+		close();			-- 关闭佃出流
+		flush();			-- 输出缓冲区里的数据
+		clearBuffer();		-- 清除缓冲区里的数据，同时把数据输出到客户端
+		clear();			-- 清除缓冲区里的数据，但不把数据输出到客户端
+		getBufferSize();	-- 返回缓冲区的大小
+	2. request
+		getMethod();						-- 返回客户端向服务器端传送数据的方法
+		getParameter(String paramName);		-- 返回客户端向服务器端传送的参数值
+		getParameterNames();				-- 获得客户端传送给服务器端的所有参数的名字，结果是一个枚举类型数据（Enumeration）
+		getParameterValues(String name);	-- 获得指定参数的所有值，由name指定
+		getRequestURL();					-- 获得以出请求字符串的客户端地址
+		getRemoteAddr();					-- 获取客户端的IP地址
+		getRemoteHost();					-- 获取客户端机器名称
+		getServerName();					-- 获取服务器的名字
+		getServletName();					-- 客户端所请求的脚本文件路径
+		getServletPort();					-- 获取服务器端的端口
+	3. response
+		addCookie(Cookie cookie);				-- 添加一个Cookie对象，用于在客户端保存特定的信息
+		addHeader(String name, String value);	-- 添加一个HTTP头信息，该Header信息将发送到客户端
+		containsHeader(String name);			-- 判断指定名字的HTTP文件头是否存在
+		sendError(int);							-- 向客户端发送错误信息 (404找不到文件 500内部错误)
+		sendRedirect(String url);				-- 重定向JSP文件
+			和<jsp:forward>的区别：
+				sendRedirect通过客户端以起二次申请，不同的request对象
+				jsp:forward是同一个request在服务器内部转发
+		setContentType(String contentType);		-- 设置MIME类型与编码方式
+	4. pageContext
+	5. session
+		void setAttribute(String name, Object value)
+		Object getAttribute(String name)
+		boolean isNew()
+	6. application
+		对应的类 ServletContext
+                        getAttriute();
+                        steAttribute();
+	7. config		
+	8. exception
+	9. page
+	
+*********************************************************************************************** 
+
+13.Servlet和JSP的通信
+
+（1）从JSP调用Servlet可用<jsp:forward>，请求信息自动转到Servlet 
+
+FromJspToServlet.jsp 
+
+<html>
+    <body bgcolor="green">
+        <!-- Forward to a servlet, 这个servlet存放在web-inf的servlet目录下 -->
+        <jsp:forward page="/servlet/ServletToJSP" />
+    </body>
+</html> 
+
+（2）从Servlet调用JSP可以使用RequestDispatcher接口的forward(req, resp)方法，请求信息需要显示传递 
+
+ServletToJSP.java 
+
+import java.io.IOException; 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse; 
+
+public class ServletToJSP extends HttpServlet { 
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
+        // 设置属性并将它分发给/servlet_jsp/ServletUseJsp.jsp处理
+        resp.setContentType("text/html;charset=gb2312");
+        req.setAttribute("servletName", "ServletToJSP");
+        // RequestDispatcher getRequestDispatcher(String path):
+        // Returns a RequestDispatcher object that acts as a wrapper for the resource located at the given path. 
+        getServletConfig().getServletContext().getRequestDispatcher("/servlet_jsp/ServletUseJsp.jsp").forward(req, resp);
+    } 
+} 
+
+（3）ServletUseJsp.jsp 
+
+<%@page contentType="text/html;charset=gb2312" %> 
+<html>
+    <meta context="text/html;charset=gb2312">
+    <head>
+        <title>Servlet使用JSP</title>
+    </head>
+    
+    <body bgcolor="gray">
+        <h2>Servlet使用JSP的例子</h2>
+        <h2>这个页面是被Servlet调用的</h2>
+    </body>
+</html> 
+  
+说明：以上相互调用也可以直接使用sendRedirect  
+
+*********************************************************************************************** 

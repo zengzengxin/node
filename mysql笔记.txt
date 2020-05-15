@@ -1,0 +1,209 @@
+1、mysql的登陆(在管理员的cmd上)
+  所用命令  mysql -uroot -p123456 P3306 h127.0.0.1（账号、密码、端口、本机回环地址）
+
+2、退出 
+   exit
+
+3、清屏
+   cls
+
+4、修该提示符
+   promote 
+    \h 当前服务器名称
+    \u  当前用户
+    \D 当前日期
+    \d  当前数据库 
+    如：promote /u&/h&/d
+
+5、关键字与函数名称大写
+   数据库名称、表名称、字段名称全部小写
+   每个sql语句必须以;结束
+
+6、创建数据库
+  CREATE DATABASE t1;
+
+7、查看当前服务器下有多少个数据库
+  SHOW DATABASEs
+  查看当前数据库有多少个表
+  show tables from mysql
+  查看当前数据库存在的表
+  show tables
+  查看某个表的全部代码
+  show create table tb3(表名)
+
+  查看某个数据库的表的各列
+  show columns from tb1;
+
+8、选中某个数据库
+   USE t1;
+
+9、查看错误警告信息
+   SHOW WARNINGS;
+
+10、修改数据编码方式
+    alter database t1 character set utf8;
+
+11数据类型之整型（unsigned：表示无符号，全为正数，）
+  （1）tinyint -128到127                  一个字节
+  （2）smallint -32768到32767             两个字节
+  （3）mediumint -8388608到8388607         三个字节
+  （4）int       负二十多亿到正二十多亿     四个字节
+  （5）bigint    2的64次方                 八个字节
+
+12浮点型（unsigned：表示无符号，全为正数，）
+  float
+  double
+
+13时间类型
+  date   1000年零点到9999年零点
+  datetime 1000年零点零分零秒到9999年。。。。
+  timestamp 1970年零点零分零秒到2037年零点零分零秒（常用）
+
+14字符型
+  char（n） 定长的字符型，n为所定之长，比如char（5）：最多存五个字符，但是不足五个字符，系统会自动补齐到五个
+  varchar(n)  可变字符常度，存多少就多少，系统不补，最多存65535个字符。
+
+15显示当前打开的数据库
+  select database();
+
+16插入数据
+  insert into tb1
+  values（
+  '曾增鑫'，20,1231.3
+  ）;
+
+17查看表的内容
+  select * from tb1;
+
+18自动编号字段
+   auto_increment
+   用int类型，起始值为1，每次增量为1
+   这个字段必须设置为主码
+   不用赋值
+
+19设置主键
+  primary key
+
+20唯一性约束
+  unique
+  可存在多个
+
+21枚举类型,只能填其中的一个
+  enum（'1','2','3'）
+
+22设置默认值
+  default ‘3’
+  ex： sex enum（'1','2','3'） default ‘3’
+  设置为无符号数 unsigned
+
+23父表为有主键的表，子表为含有外键的表,子表参照父表，要先插入主表，才能写父表
+
+
+24外键   foreign key
+         设置外键
+         foreign key（pid）references province（id）
+         意思为这个表的外键pid参照与省份表的id
+
+25查看索引（查看表tb1的索引）
+      show indexes from tb1
+      以键值对方式显示则在后面加上\G
+      show indexes from tb1\G;
+
+26联级删除 cascade
+       用在外键约束后面，当父表删除或者更新的时候，自动更新和删除子表的内容 
+       foreign key（pid） references province(id) on delete cascade;
+
+
+27设置为空 set null
+       用在外键约束后面，当父表删除或者更新的时候，子表相应位置设置为空，
+       但是要注意如果相应行设置了not null 必定会操作失败
+      foreign key（pid） references provinces(id) on delete set null;
+
+28为表添加一个列
+   alter table tb2 add column age tinyint not null unsigned default 10 after username;
+   (为tb2添加一个列，列名age tinyint型，非空，无符号数，默认为十，放在username后面)
+
+29删除表中的一列
+  alter table tb2 drop age;
+
+30在已经创建完的表上添加主键
+  alter table tb3 add primary key（id）;
+
+31添加唯一约束
+   alter table tb3 add unique key(username)；
+
+32添加外键约束
+    alter　table tb3 add foreign key(pid) references tb1 (id);
+
+33删除外键约束
+    alter table tb3  drop foreign key tb3_ibfk_1(外键约束的名字);
+
+34删除主键约束
+    alter table tb3  drop primary key;(无需名字)
+
+35删除唯一约束
+   alter table tb3  drop unique key tb3_ibfk_1(唯一性约束的名字);
+
+36修改数据列定义
+   alter table tb3  change pid p_id tinyint unsigned not null first;
+   将pid更名为p_id 类型换为tinyint 无符号 非空 放在最上面
+   如果不用改名字
+   alter table tb3 modify id samllint first;(注意，id（列名）后面一定要跟数据类型，否则语法错误)
+   吧id放在最前面,
+
+37修改表的名字
+  alter table tb3 rename to user;  
+
+38对于默认的字段，如auto_increment，在这个字段插入数据 的时候，写null或者default即可
+
+
+39对查询结果的分组（因为是对结果的分组，所以要放在where后面，因为where还是查询的一部分）
+   group by 
+
+40 对分组做条件指定，
+（having 只能放在group后面，对group出来的结果做进一步的选择，
+ 故having后面出现的必须在前面的select中有的，或者是聚合函数（sum count（）等），）
+    having + 条件
+
+
+41排序order by [列名] [asc|desc]
+    当按照多个字段排序的时候，先按第一个字段排序，再看相同的按照第二个字段排序
+
+
+42将查询结果插入一个新建立的表中
+  insert into user（username p_id） select username,pid from tb2;
+
+
+43 any all some in ont in  exist no exist
+   如子查询查询结果返回的是一个集合，即不止一个结果，那么需要用到这三个关键字
+   any 意味着满足任意一个 
+   all 全部都要满足
+   in  在这个结果集里的其中一个
+   not in 不再这个结果集的
+   exist 子查询返回结果不为空时返回true给父查询
+   如:>any意味着比子查询返回的任何一个结果大就可以，>all 意味着要比返回来的所有的都大 
+     in 意味着在这个结果集里其中一个相同就可以
+
+44 连接，
+    inner join 内连接，用某个条件将这两个表连起来，生成的表只有符合条件的记录，当对这个连起来的表做操作的时候，
+                      被连接的两个表都会被改变，又叫做多表更新
+    left join  左外连接，显示左表的全部，在找出符合条件的记录
+    right join 右外连接  显示右表的全部，以及所有符合条件的纪录
+    （连接后，相当于将多个表合成一个表，然后对这个表做操作，和若是对这张连起来的表做增删改，原表也会被影响）
+
+45匹配查询 如：where、like ‘%k%’
+   %代表任意一个或者多个字符
+   _代表任意一个字符
+
+46 between and 后面跟一个区间
+   in 后面跟几个特殊的元素的集合
+
+47 修改mysql的结束符
+   delimiter //修改为以//结束
+
+48 创建存储过程
+   create procedure 名字 （in 参数名 类型 ,out 参数名 类型）//in是参数，out是返回参数 into 等于放入。
+    begin
+    。。。。。
+    end
+    调用时 call 名字；

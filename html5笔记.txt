@@ -1,0 +1,478 @@
+1、基本格式
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf8">
+	<title>基本格式</title>
+</head>
+<body>
+
+<a href="http://www.baidu.com">百度</a>
+
+</body>
+
+2、文本元素
+   用b或者strong实现加粗效果
+   用br换行 wbr为安全换行，针对英文
+   用i或者em实现倾斜效果
+   用del实现删除线的效果
+   用u实现下划线的效果
+   用small实现小号字体效果
+   用sub实现下标效果
+   用sup实现上标的效果
+   用q实现双引号的效果
+   用mark实现强调的效果
+
+
+3、超链接与路径
+   <a href="http://www.baidu.com" target="blank">百度</a>
+   href表示要跳转到哪里
+   target=“blank”为新窗口打开，默认为自身
+   理解绝对路径与相对路径
+
+
+4、锚点的运用
+   在一个很长的页面中实现快速的跳转
+   <a href="#1">第一章</a> <a href="#2">第二章</a> <a href="#3">第三章</a>
+   <a name="1">第一章内容</a>
+   <a name="2">第二章内容</a> 
+   <a name="3">第三章内容</a>
+
+5、分组元素
+    p表示一个段落 
+
+    pre可以展示原来格式的内容
+  	如：
+  	  ***
+  	 *****
+  	*******  
+
+    hr是一条分隔线
+
+    ul li 是无序列表
+
+    ol li 是有序列表 start = "2" 表示从2开始计数，type可指定类型，
+     可以是数字或者大小写字母,也可以在任意一个li里面加value强制指定编号 （value=“7”）
+
+    dl dt dd 生成说明列表,dt是文章的头部
+
+    figure 和 figcaption 用于文字插图 figcaption包含的内容为图片头部
+
+6、表格
+   table	表示这个表格，border=1时边界才可见
+   thead	thead表示标题行，一般与th一起，表示第一行
+   tbody	表示非表头和表尾的地方
+   tfoot	表脚，最后一行
+   tr	        表示普通的一行
+   th	        表示一格，具有加粗举居中的功能，一般用作标题
+   td	        普通的一行
+   col	        表示一列
+   colgroup	表示一组列
+   caption	表示表格标题
+
+    
+7、文档元素
+   h1~h6 表示标题
+   header 表示首部
+    footer 表示尾部
+   nav 表示有意集中在一起的导航元素
+   section 表示重要概念或主题
+   article 表示一段独立的内容
+   address 表示文档或 article 的联系信息
+   aside 表示与周边内容少有牵涉的内容
+   hgroup 将一组标题组织在一起
+   details 生成一个区域，用户将其展开可以获得更多细节
+   summary 用在 details 元素中，表示该元素内容的标题或说明
+
+8、嵌入元素
+   1、img为图片标签，alt可以设置图片显示不了的时候显示的东西，用usemap 和 map 这一组标签创建图片热点分区，用dreamwea
+   2、用ifarm实现插入另一个窗口
+   3、progress为进度条，可用js控制内部的值，value为值，max表示最大长度
+   4、meter为提醒条，效果与进度条差不多，就像手机的电量提醒，min 和 max 表示范围边界，
+      low 表示小于它的值过低，低于这个值时变为黄的，high 表示大于它的值过高，optimum 表示最佳值，但不出现效果。 
+   5、视屏元素video
+      src 表示视屏的资源
+      width
+      height
+      autoplay 表示立即播放
+      preload 表示预先加载
+      control 显示播放控件
+      loop 循环播放
+      poster 设置第一针画面
+   6、音频元素audio
+      src 表示视屏的资源
+      autoply 表示立即播放
+      preload 表示预先加载
+      controls 显示播放控件
+      muted 静音播放
+
+9、input
+  <input type="text" maxlength="20" placeholder = "sadsa" size="50px" value="xxx"><br>
+list 指定为文本框提供建议值的 datalist 元素，其值为<br>
+datalist 元素的 id 值<br>
+maxlength 设置文本框最大字符长度<br>
+pattern 用于输入验证的正则表达式<br>
+placeholder 输入字符的提示<br>
+readonly 文本框处于只读状态<br>
+disabled 文本框处于禁用状态<br>
+size 设置文本框宽度<br>
+value 设置文本框初始值<br>
+required 表明用户必须输入一个值，否则无法通过输入验证<br>
+
+<input list="footlist">
+<datalist id="footlist">
+<option value="苹果">苹果</option>
+<option value="桔子">桔子</option>
+<option value="香蕉" label="香蕉">
+<option value="梨子">
+</datalist>
+<br>
+密码框：<input type="password"><br>
+搜索框：<input type="search"><br>
+数字框：<input type="number" step="2" min="10" max="100"><br>
+时间框date：<input type="date"><br>
+时间框month：<input type="month"><br>
+时间框time：<input type="time"><br>
+时间框week：<input type="week"><br>
+时间框datetime：<input type="datetime"><br>
+时间框datetime-local：<input type="datetime-local"><br>
+<span>复选框checkbox</span><br>
+音乐 <input type="checkbox">
+体育 <input type="checkbox"><br>
+<span>单选框radio,name值必须一致</span><br>
+<input type="radio" name="sex" value="男">男
+<input type="radio" name="sex" value="女">女
+
+<span>生成按钮</span><br>
+提交：<input type="submit">
+重置：<input type="reset">
+普通按钮：<input type="button"><br>
+
+图片按钮
+<input type="image" src="../image/logo9.png" width="20px" height="15px" ><br>
+
+email:<input type="email"><br>
+tel:<input type="tel"><br>
+url:<input type="url"><br>
+
+上传文件：<input type="file">
+
+10、下拉列表框
+   <select name="fruit">
+   <option value="1">苹果</option>
+   <option value="2">橘子</option>
+   <option value="3">香蕉</option>
+   </select> 
+  多行文本框
+   textarea
+
+11、实体属性
+   &nbsp 空格
+   &yen  钱
+   不懂可查
+   3.模拟 HTTP 标头字段
+   //5 秒跳转到指定 URL
+   <meta http-equiv="refresh" content="5;http://li.cc">
+
+12、css
+    有四种样式
+    (1).浏览器样式（元素自身携带的样式）；
+    (2).外部引入样式（使用<link>引入的样式）；
+    (3).文档内嵌样式（使用<style>元素设置）；
+    (4).元素内嵌样式（使用 style 属性设置）。
+     采用继承方式，继承级别依次增高，冲突则采用级别高的，内嵌式最高
+   
+    常用引入css 
+     <link rel="stylesheet" type="text/css" href="style.css">
+
+13、css选择器
+ 一普通选择器
+    *  全选
+
+    元素选择器：以元素的方式选择某个元素
+
+    id选择器
+
+    类选择器
+
+    属性选择器
+    如
+     [href] {
+        color: orange;
+      }
+   表示选中包含有href的全部元素
+
+ 二复合选择器
+   复合元素选择器
+   如 p,b,i,span {color: red;}
+   
+   后代选择器
+   如p b {color: red;} 选择p下的全部b，不管深度
+
+   子选择器
+   ul > li {border: 1px solid red;} 选择ul下的儿子li，孙子不会选择
+
+ 三伪元素选择器：：
+   1.::first-line 块级首行
+      ::first-line {
+        color: red;
+      }
+    解释：块级元素比如<p>、<div>等的首行文本被选定。如果想限定某种元素，可以加
+    上前置 p::first-line。
+
+   2.::first-letter 块级首字母
+      ::first-letter {
+        color: red;
+      }
+     解释：块级元素的首行字母。
+
+四伪类选择器：（只有一个：）
+    1:nth-child(n)系列
+      ul > li:nth-child(2) {
+        color: red;
+      }
+    
+解释：选择子元素的第二个元素。
+  
+    状态伪类选择器
+    ：enabled 选择启用状态的元素
+    ：disabled 选择禁用的元素
+    ：checked 选择勾选的input元素
+    ：default 选中默认的元素
+    ：value 选中验证合法的元素
+    ：invaule 选择验证不合法的元素
+   
+   动态伪类选择器（重要）
+   a:link 选中未被访问过的元素
+   a：visited 选中已经被访问过的元素
+   a：hover鼠标悬停在上面
+   a:active 鼠标按下的时候
+   input：focus获得光标的时候
+
+14、css之颜色
+    设置颜色用color：（如color red）
+    也可以是采用rgb （如color: rgb(112, 128, 114);）
+
+15、常用的单位 
+    px 
+    %
+    em 与html根元素挂钩 3em表示为html根元素的三倍
+    rem 与父元素挂钩
+    rgb（0,0,0）黑色
+    rgb（0,0,0,0.6）表示透明度为0.6的黑色
+    deg角度
+
+16、文本样式
+   设置字体大小：front-size:50px;
+   字体倾斜：    front-style：italic；
+   设置字体加粗：front-weight：bold；
+   设置字体：    front-family：宋体；
+   文本下划线：  text-decoration：underline；
+   上划线：      text-decoration：overline；
+   删除线：      text-decoration：throughline；
+   文本阴影：    text-shadow : 5px 5px 3px black; 水平偏移，垂直偏移，模糊度，阴影颜色
+   左对齐：      text-align：left； 
+   右对齐：      text-align：right；
+   居中：        text-align：center；
+   行距：        letter-spacing：4px；
+   字距：        word-spacing：14px；
+   行高：        line-hight：20px；
+   首行缩进：     text-index：20px；
+
+17、css盒模型
+    很多盒子默认有内外边距，如body p，但是可以自己通过margin和padding设置取消
+
+    div是一个没有默认内外边距的盒子
+
+    自己设置的内边距算在盒子里，自己设置的外边距不算在盒子里
+
+    盒子的一些属性 width height min-height min-width max-hight max-width
+
+    盒子有内外边距margin 和 padding 可以自己设置 有margin-top margin-right margin-bottom margin-left padding也一样
+    可以自己设置 （简写 margin 10px 20px 30px 40px）
+
+    当盒子里的东西过多时会产生以溢出，用overflow做溢出处理
+      auto 浏览器自行处理溢出内容。如果有溢出内容，就显示滚动条，否 则就不显示滚动条。
+      hidden 如果有溢出的内容，直接剪掉。
+      scroll 不管是否溢出，都会出现滚动条。但不同平台和浏览器显示方式不同。
+      visible 默认值，不管是否溢出，都显示内容。
+   
+   设置元素的可见性
+   visibility visible   可见默认
+   visibility hidden    不可见，但是会占据空间
+   visibility collapse  元素不可见隐藏行列，如果不是表格，效果与hidden一样
+
+  元素的盒类型有 块级元素、行内元素、行内外元素 可以通过display相互转化
+  
+   元素的浮动（float） 元素会浮到页面本身上层，下面的元素会自己跑上来，导致看不见，但是字体会自动跑出来
+   清理浮动 用clear：both
+
+18、边框
+    边框有三个属性
+    边框宽度 border-width：5px；
+    边框样式 border-style：solid （dashed 破折线 dotted 圆点线 ）
+    边框颜色 border-color：red
+    也可以单独设置某一个边线：border-top-style：solid；
+    简写形式：border：5px solid red；
+    圆角边框：border-radious：5px；
+
+19、背景
+   设置背景颜色 backround-color：red；
+
+   图片做背景：background-image: url(loading.gif);
+
+   图片做背景的时候图片不和盒子大小一样，可用background-repeat设置平铺的方式
+    repeat-x：水平平铺
+    repeat-y：垂直平铺
+    no-repeat：一张图片居中显示
+  
+   还可以用background-position设置背景图片的位置
+   background-position：20px 20px；
+
+   用background-size设置背景图片的大小
+    background-size：240px 240px
+   常用background-size：100%；表示一张图片铺面
+
+   background-attachment: fixed;背景不随着内容移动而移动
+
+   简写：background: silver url(img.png) no-repeat scroll ;
+
+   vertical-align: top;内容对象与顶端对齐（重要）
+
+20其他样式
+   设置字体颜色 color：red；
+
+   设置元素的透明度：opacity：0.5；
+
+   盒子阴影：box-shadow ：5px 5px 2px 7px gray；
+   横向偏移 可正可负
+   纵向偏移 可正可负
+   模糊距离 
+   阴影尺寸
+   颜色
+   insert 可设置阴影向内
+  
+  光标样式 course pointer （手型常用）
+
+21、厂商前缀
+  Chrome、Safari -webkit
+  Opera  -o-
+  Firefox-moz-
+  Internet   Explorer -ms-
+     
+
+22、文本效果
+    文本阴影 text-shsdow：2px 2px 2px red；
+    文本裁剪 texyt-overf：ellipsis;
+ 
+
+
+23、渐变效果（backroubd-image：linear-gradiet（））
+    1、线性渐变，直线方向的渐变
+         不加透明度的渐变，逆时针九十度开始三个颜色逐渐渐变
+         background-image: linear-gradient(90deg,orange ,silver,blue);
+
+    2、线性渐变，加透明度的，可以叠加在背景颜色上，但是会和背景图片冲突
+       background-image: linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0));
+
+    3、径向渐变，从一个点向四周渐变，用法与线性渐变一样，知识把linear改为radial
+
+
+24、变形效果（transform），使元素发生偏移、旋转、缩放、等功能，结合动态选择器：hover、：focus等可以做出一些动态效果 
+    1、偏移 transform:translate(200px,200px);表示以中心为原点向下，向右偏移200px
+    
+    2、缩放、transform:scale(0.5,0.6);表示纵向缩小到0.5，横向缩小到0.6
+
+    3、旋转、transform：rotate(45deg);以元素的中心点为原点顺时针旋转45度
+
+    4、倾斜、transform：skew（45deg）；以元素的中心点为原点倾斜45度
+
+    5、更改中心点：transform-origin: 0px 0px;更改为以顶点为原点
+
+
+25、3D变形，（transform）
+   
+    1、在父元素里设置
+        transform-style:preserve-3d;
+	prespective:1000px;
+
+    2、3d旋转（要设置的元素里）
+       transform：rotateX（45deg）； 以x轴为中心轴，顺时针旋转45度
+       transform：rotateY（45deg）； 以Y轴为中心轴，顺时针旋转45度
+       transform：rotateZ（45deg）； 以Z轴为中心轴，顺时针旋转45度
+    
+    3、简写
+       transform:rotateX(80deg) rotateZ(30deg) ;
+       transform:  rotateZ(-25deg) rotateX(60deg) rotateY(25deg);
+       transform:  rotateZ(-25deg) rotateX(60deg) rotateY(25deg) scale（1.2）;
+
+    4、更改基准点
+       perspective-origin: top right;
+
+26、过度效果（重要）
+    首先在元素里设置过度时间
+     transition：1s；
+    然后再动态选择器里写上想要的效果
+    如.a:hover{	width: 800px;}
+
+
+27、动画效果
+    首先要用@keyframes关键字创建一个动画
+     如
+  @keyframes myani{
+    0%{
+    	background-image: url(../image/phone1.jpg);
+    	background-size: 1000px 640px; 
+    }
+    25%{
+    	background-image: url(../image/phone2.jpg);
+    	background-size: 1000px 640px;
+    }
+    50%{
+    	background-image: url(../image/phone3.png);
+    	background-size: 1000px 640px;
+    }
+    75%{
+    	background-image: url(../image/fengjing1.jpg);
+    	background-size: 1000px 640px;
+    }
+
+    100%{
+    	background-image: url(../image/logo9.png);
+    	background-size: 1000px 640px;
+    }
+  }
+
+  2、调用动画如
+     .a{
+	width: 1000px;
+	height: 640px;
+	border:3px solid red;
+	box-shadow: 10px 10px 20px 20px gray;
+	animation:myani 10s ease 1000;
+        //调用动画myani 一次播放用10s 平滑过渡 播放1000次
+     }
+
+    
+     
+28、多列布局
+    columns:300px 2;
+    设置当屏幕缩小到300px以下之后单列显示，全屏显示两列
+    column-rule:2px solid gray;
+    设置中间间隔线
+
+29、少用id多用class
+
+30、元素居中
+    margin：0 auto；
+    水平居中：text-align：center
+    垂直居中：line-height：等于元素高度
+
+31、在透明化的元素上做东西的时候，做上的东西也会透明化
+
+
+32、去掉input的边框用outline：none；
+
+31、每个页面都应该只有一个h1，方便搜索引擎抓取
+
+

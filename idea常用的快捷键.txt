@@ -1,0 +1,42 @@
+sout == systemt.out.println()，也可以用输出内容+sout
+psvm == 等于main方法
+for 可以看到普通for循环
+要对集合类型进行foreach循环，则在集合对象上加".iter"
+如
+ ArrayList<String> list = new ArrayList<String>();
+ list.iter
+则
+ ArrayList<String> list = new ArrayList<String>();
+        for (String s : list) {
+            
+        }
+
+ctrl+alt+l:格式化代码，将凌乱的代码的格式调整一下 
+
+ctrl+f12 显示当前文件的结构（所有方法）     
+
+ctrl+p 显示参数信息
+
+ctrl + y 删除整行
+
+ctrl + D 复制当前行
+
+ctrl+h 查看当前类的继承体系
+
+ctrl + n 通过搜索快速打开某个类
+
+ctrl+/ 单行注释，解开注释也是这杨
+
+ctrl+shift +/ 多行注释，解开注释也是这样
+
+alt+insert 自动生成构造器和get和set方法
+
+alt+shift+up 和alt+shoft+down 将代码上下移动
+
+双击shift 打开任意类
+
+alt + enter 自动修复
+
+ctrl + o 重写父类的方法
+
+记得中午要办银行卡

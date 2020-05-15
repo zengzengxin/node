@@ -1,0 +1,117 @@
+springmvc 接收参数的方式
+1、在rest风格中
+通过 @PathVariable 可以将 URL 中占位符参数绑定到控 制器处理方法的入参中
+
+前台发送请求testrequestmapping/testpathvariable/101
+后台有如下代码
+	@RequestMapping("/testpathvariable/{id}")
+	public String testpathvariable(@PathVariable("id") Integer id){
+		System.out.println("test pathvariable" + "      "+id);
+		return"success";	
+	}
+
+
+
+2、使用@RequestParam来得到前台提交过来的参数对于前台提交过来的参数后台如何获取
+ //接收民资为username和password的参数，并且参数可为空,要用封装类型，不可用基本类型
+@RequestMapping(value = "testparbyget",method = RequestMethod.GET)
+    public String testparbyget(@RequestParam(value="username",required = false) String username,@RequestParam(value = "password",required = false) String password){
+    	System.out.println("testparbyget：" +username +"    "+password);
+	return "success";   	
+    }
+
+
+3、使用对象来接收前台穿过来的参数,叫做pojo，他还可以接受级联属性的赋值（为该对象里面的对象赋值）（非常重要）
+    1、创建实体类来作为容器，接收参数
+    2、用实体类的对象做参数，将前台穿够来的数据直接装入容器
+如
+1前台的form为
+   <form action="testrequestmapping/testpojo" method="post">
+		       账号：<input type="text" name = "username"></br>
+		       密码：<input type="password" name = "password"></br>
+		       mail：<input type="text" name = "email"></br>
+		       age：<input type="text" name = "age"></br>		
+               //为级联属性赋值      		   
+		       province：<input type="text" name = "address.province"></br>		      		       //为级联属性赋值
+		       city：<input type="text" name = "address.city"></br>		      		   
+		       <input type="submit" value="testpojo_submit">
+     </form>
+     3直接将传过来的东西注入到给实体类容器
+      @RequestMapping(value = "testpojo")
+	public String testpojo(user user){
+		System.out.println(user);
+		return "success";
+	}
+
+
+4、用原生api来作参数，这些参数不是接受前台传来的原生api
+  @RequestMapping(value = "useservletapi",method = RequestMethod.POST)
+    public void useservletapi( HttpServletRequest request,HttpServletResponse response,Writer out ) throws IOException{
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		String email = request.getParameter("email");
+		String age = request.getParameter("age");
+		out.write(username);
+		out.write(password);
+		out.write(email);
+		out.write(age)
+		System.out.println(username);
+  }
+
+
+
+
+
+
+springmvc返回内容的方式（不论返回的是什么都会被解析为modelandview）
+1、直接返回一个字符串，那么这个字符串会被作为视图解析
+
+2、返回一个modelandview（viewname会被作为视图去解析，里面添加的对象（model部分，实际相当于map）会被遍历，然后会一个一个地放到request域里面，那么前端可以直接解析并获得）
+   
+  @RequestMapping("/modelandview")	
+   public ModelAndView testmodelandview(){
+   //viewname会交个视图处理器处理，然后跳转到相应的success.jsp
+	String viewname = "success";
+	ModelAndView modelAndView = new ModelAndView(viewname);
+    //将一个对象写入modelandview的model里面，那么这个兑现会写入request域
+	modelAndView.addObject("time",new Date());
+	//返回出来
+	return modelAndView;
+  }
+
+
+3、用map做参数，这时候map不是为了接收前端穿过来的东西，而是为了装载数据，map部分会像modelandview里面的model被写入request域对象里面
+     //用对象us接收前台传来的数据，然后将兑现写入map，springmvc会将map写入到request域里面，然后前端页面就可以得到	
+     @RequestMapping(value="testmap",method = RequestMethod.POST)
+	public String testmap(user us,Map<String, Object> uesrmap) {
+		System.out.println(us);
+		uesrmap.put("user", us);
+		return "success";
+	}
+
+
+
+
+
+
+
+
+springmvc写入数据到session
+ @SessionAttributes(value = {"user","name","list"})
+ 这个注解只能用在类的上面，在这个类里面的的任何一个映射在创建了和"user","name","list"同名的对象并且放入map或者modelandview的时候，
+ 他不但将数据放入到request域里面，还会将数据放入到session域里面
+       
+       @RequestMapping("testsession")
+	public ModelAndView testSession() {
+		String viewname = "success";
+		ModelAndView andView = new ModelAndView(viewname);
+                //在这个controller类上面加上@SessionAttributes(value = {"user"})后user不但会放入到request域里面，还会放入到session域里面
+		user user = new 年	();
+		user.setAge(10);
+		andView.addObject("user",user);
+		return andView;
+	}
+
+
+13@modelattribute注解
+首先他在每个目标方法执行之前都会执行，他可以解决对象部分更新的问题

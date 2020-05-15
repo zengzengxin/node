@@ -1,0 +1,554 @@
+$(function(){});//执行匿名函数
+
+$('#box');//用id进行元素选择
+
+$('#box').css('color','red');//执行函数
+
+$('#box').css('color', 'red').css('font-size', '50px'); //连缀，都是返回jq对象
+$('#box'）.get(0); //ID 元素的第一个原生 DOM  等价于document.getElementById('box')[0]
+
+$是对jquary的缩写，两者全等
+
+$('#box').css('color', 'red')直接暴露不会执行，因为网页是从上往下加载，jquary先于网页节点元素加载，导致jq找不到元素从而无法执行。
+
+window.onload = function () {}; //JavaScript等待加载
+$(document).ready(function () {}); //jQuery等待加载
+在onload下的意味着先等网页元素加载完了再加载onload的代码，故可以执行，但是是要等图片视屏均加载才执行，比较鸡肋
+
+$(function () {
+});//jquary加载办法
+只要节点加载完成就会执行jquary并且可以执行多个同样的函数，故很好用
+
+$('div').css('color', 'red'); //元素选择器，返回多个元素,可同时操作多个元素
+$('#box').css('color', 'red'); //ID 选择器，返回单个元素，只认一个，只认第一个
+$('.box').css('color', 'red'); //类(class)选择器，返回多个元素，可同时操作多个元素
+$('#box > p').css('color','red'); //jQuery 子选择器，兼容了 IE6
+$('span,em,.box')//span,em,.box {}群组选择器, 获取多个选择器的 DOM 对象
+$('ul li a') // ul li a {}后代选择器,获取追溯到的多个 DOM 对象
+$('*') // * {}通配选择器,获取所有元素标签的 DOM 对象
+$('#box p, ul li *').css('color', 'red'); //组合了多种选择器
+
+ jQuery 核心自带的一个属性 length 或 size()方法来查看返回的元素个数
+
+有个问题特别要注意，ID 在页面只允许出现一次，我们一般都是要求开发者要
+遵守和保持这个规则。但如果你在页面中出现三次，并且在 CSS 使用样式，那么这三个元
+素还会执行效果。但如果，你想在 jQuery 这么去做，那么就会遇到失明的问题。所以，开
+发者必须养成良好的遵守习惯，在一个页面仅使用一个 ID。
+$('#box').css('color', 'red'); //只有第一个 ID 变红，后面两个失明
+
+css是添加样式，jquary是添加行为，并且jq兼容到了ie6，$('#box > p').css('color','red'); //jQuery 子选择器，兼容了 IE6
+
+jquary容错力太强，即使用元素选择器时不存在这个元素也不报错
+if ($('#pox').length > 0) { //判断元素包含数量即可
+$('#pox').css('color', 'red');
+}
+解决元素不存在问题
+
+$('li:first')//选取所有li中的第一个
+$('li').first(); //元素 li 的第一个元素，比较常用
+$('li:last')//选取所有li中的最后一个
+$('li').last(); //元素 li 的最后一个元素比较常用
+$('li:not(.red)); //非 class 为 red 的元素
+$('li').not('.red'); //元素 li 不含 class 为 red 的元素，比较常用
+$('li:even'); //索引为偶数的元素，第0 2 4 6。。。偶数的li被选中
+$('li:odd); //索引为奇数的元素
+$('li:eq(2)); //指定索引值的元素
+$('li').eq(2); //元素 li 的第三个元素，负数从后开始，比较常用
+$('li:gt(2)'); //大于索引值的元素
+$('li:lt(2)'); //小于索引值的元素
+$(':header'); //页面所有 h1 ~ h6 元素
+$(':focus'); //被焦点的元素
+$('ul').has('.red'); //选择子元素含有 class 是 red 的元素
+$('.red').is('li'); //true，选择器，检测 class 为是否为 red
+$('.red').is(function () { //true，方法，同上
+return $(this).attr('title') == '列表 3'; //可以自定义各种判断
+}));//判断class为red的元素是否有title==3
+$('li').slice(0,2).css('color', 'red'); //前三个变成红色
+$("div").find("p").end().get(0); //返回 div 的原生 DOM
+
+
+
+$('li').parent(); //选择当前元素的父元素
+$('li').parents(); //选择当前元素的父元素及祖先元素
+$('li').parentsUntil('div'); //选择当前元素遇到 div 父元素停止
+$('p:hidden).size(); //元素 p 隐藏的元素
+$('p:visible').size(); //元素 p 显示的元素
+$('li:first-child'); //每个父元素第一个 li 元素
+$('li:last-child'); //每个父元素最后一个 li 元素
+$('li:only-child'); //每个父元素只有一个 li 元素
+$('li:nth-child(odd)'); //每个父元素奇数 li 元素
+$('li:nth-child(even)'); //每个父元素偶数 li 元素
+$('li:nth-child(2)'); //每个父元素第三个 li 元素
+
+
+设置元素及内容:html方法 text方法  val方法
+$('#box').html（）//获取box标签下的内容，会连html标签一起获取
+$('#box').html('<em>www.li.cc</em>'); //设置 html 内容
+$('#box').text(); //获取文本内容，会自动清理 html 标签
+$('#box').text('<em>www.li.cc</em>'); //设置文本内容，会自动转义 html 标签
+$('#box').html($('#box').html() + '<em>www.li.cc</em>'); //追加数据
+$('input').val(); //获取表单内容
+$('input').val('www.li.cc'); //设置表单内容
+$("input").val(["check1","check2", "radio1" ]); //value 值是这些的将被选定
+
+
+属性设置attr
+$('div').attr('id'); //box 获取属性的属性值
+$('div').attr('title', '我是域名'); //设置属性及属性值
+$('div').removeAttr('title'); //删除指定的属性
+$('div').attr('title', function (index, value) { //可以接受两个参数
+return value + (index+1) + '，我是域名';
+});//传递的两个参数中index代表着索引，代表着页面中存在的第几个div，value代表着原来的title值
+
+
+元素样式设置操作css
+$('div').css('color')//获取css的color属性的值
+$('div').css('color','red')//设置css样式
+var box = $('div').css(['color', 'height', 'width']); //得到多个 CSS 样式的数组对象，返回的是一个一个的对象
+//each工具
+jQuery 提供了一个遍历工具专门来处理这种对象数组，$.each()方法，这个方法可以轻松的遍历对象数组。
+$.each(box, function (attr, value) { //遍历 JavaScript 原生态的对象数组
+alert(attr + ':' + value);
+});
+使用$.each()可以遍历原生的 JavaScript 对象数组，如果是 jQuery 对象的数组怎么使用.each()方法呢？
+$('div').each(function (index, element) { //index 为索引，element 为元素 DOM
+alert(index + ':' + element);
+});
+在需要设置多个样式的时候，我们可以传递多个 CSS 样式的键值对即可。
+$('div').css({
+'background-color' : '#ccc',
+'color' : 'red',
+'font-size' : '20px'
+});
+如果想设置某个元素的 CSS 样式的值，但这个值需要计算我们可以传递一个匿名函数。
+$('div').css('width', function (index, value) {
+return (parseInt(value) - 500) + 'px';
+});//将width设置为return值
+
+添加删除class
+$('div').addClass('red'); //添加一个 class 
+$('div').addClass('red bg'); //添加多个 class 
+$('div').removeClass('bg'); //删除一个 class 
+$('div').removeClass('red bg'); //删除多个 class 
+$(‘div’).toggleClass('red ');//将原来的class后面加上一个class‘red’，在来一次时又移除class，原先存在的不受影响一般与click连用，点一下变一下。 
+实现两个class、之间的切换
+$('div').click(function () {
+$(this).toggleClass(function () {
+if ($(this).hasClass('red')) {
+$(this).removeClass('red');
+return 'green';
+} else {
+$(this).removeClass('green');
+return 'red';
+}
+});
+});
+
+
+jq封装的一些常用的方法width height
+$('div').width(); //获取元素的长度，返回的类型为 number
+$('div').width(500); //设置元素长度，直接传数值，默认加 px
+$('div').width(function (index, value) { //index 是索引，value 是原本值
+return value - 500; //无须调整类型，直接计算
+});
+
+alert($('div').width()); //不包含
+alert($('div').innerWidth()); //包含内边距 padding
+alert($('div').outerWidth()); //包含内边距 padding+边框 border
+alert($('div').outerWidth(true)); //包含内边距 padding+边框 border+外边距 margin
+height同上
+
+$('strong').offset().left; //相对于视口的偏移
+$('strong').position().left; //相对于父元素的偏移
+$(window).scrollTop(); //获取当前滚动条的位置
+$(window).scrollTop(300); //设置当前滚动条的位置
+
+插入节点
+向内部插入
+append(content) 向指定元素内部后面插入节点 content
+append(function (index, html) {}) 使用匿名函数向指定元素内部后面插入节点
+appendTo(content) 将指定元素移入到指定元素 content 内部后面
+prepend(content) 向指定元素 content 内部的前面插入节点
+prepend(function (index, html) {}) 使用匿名函数向指定元素内部的前面插入节点，不需创建
+prependTo(content) 将指定元素移入到指定元素 content 内部前面，不需创建
+同级插入
+after(content) 向指定元素的外部后面插入节点 content
+after(function (index, html) {}) 使用匿名函数向指定元素的外部后面插入节点
+before(content) 向指定元素的外部前面插入节点 content
+before(function (index, html) {}) 使用匿名函数向指定元素的外部前面插入节点
+insertAfter(content) 将指定节点移到指定元素 content 外部的后面，不需创建
+insertBefore(content) 将指定节点移到指定元素 content 外部的前面，不需创建
+
+元素包裹
+$('div').wrap('<strong></strong>'); //在 div 外层包裹一层 strong
+$('div').wrap('<strong>123</strong>'); //包裹的元素可以带内容
+$('div').wrap('<strong><em></em></strong>'); //包裹多个元素
+//复制节点
+$('body').append($('div').clone(true)); //复制一个节点添加到 HTML 中
+//删除节点
+$('div').remove(); //直接删除 div 元素
+//清空节点
+$('div').empty(); //删除掉节点里的内容
+//替换节点
+$('div').replaceWith('<span>节点</span>'); //将 div 替换成 span 元素
+
+
+表单处理
+原始处理法
+$('input').val(); //元素名定位，默认获取第一个
+$('input').eq(1).val(); //同上，获取第二个
+$('input[type=password]').val(); //选择 type 为 password 的字段
+$('input[name=user]').val(); //选择 name 为 user 的字段
+比较灵活处理法
+$(':input').size(); //获取所有表单字段元素
+$(':text).size(); //获取单行文本框元素
+$(':password').size(); //获取密码栏元素
+$(':radio).size(); //获取单选框元素
+$(':checkbox).size(); //获取复选框元素
+$(':submit).size(); //获取提交按钮元素
+$(':reset).size(); //获取重置按钮元素
+$(':image).size(); //获取图片按钮元素
+$(':file).size(); //获取文件按钮元素
+$(':button).size(); //获取普通按钮元素
+$(':hidden).size(); //获取隐藏字段元素
+注意：返回的均是元素集合，用eq（n）进行筛选
+如果想获取某一个指定的元素，最好结合一下属性选择器。比如：
+$(':text[name=user]).size(); //获取单行文本框 name=user 的元素
+
+获取表单中被选中的元素
+$(':enabled').size(); //获取可用元素
+$(':disabled).size(); //获取不可用元素
+$(':checked).size(); //获取单选、复选框中被选中的元素
+$(':selected).size(); //获取下拉列表中被选中的元素
+
+
+常用事件
+click、鼠标点击
+dblclick、双击
+mousedown、鼠标按下
+mouseup、鼠标松开
+mousemove、鼠标移动
+mouseover、鼠标移入
+mouseout、鼠标移出
+change、当用于 select 元素时，change 事件会在选择某个选项时发生。当用于 text field 或 text area 时，该事件会在元素失去焦点时发生。
+select、当 textarea 或文本类型的 input 元素中的文本被选择时，会发生 select 事件
+submit、当提交表单时，会发生 submit 事件。
+keydown、键盘按下
+keypress、键盘弹起
+keyup、键盘弹起
+blur、失去光标
+focus、光标移入
+load、加载
+resize、窗口大小变化
+scroll、滚动条
+error。错误
+
+事件绑定函数bind（）
+bind（type，[date],fn）,bind()接受三个参数，第一个为事件类型，第二个可传可不传，一般不传，第三个为处理函数
+四种形态
+//匿名函数法
+$('input').bind('click', function () { //点击按钮后执行匿名函数
+alert('点击！');
+});
+//普通处理函数
+$('input').bind('click', fn); //执行普通函数式无须圆括号
+function fn() {
+alert('点击！');
+}
+//可以同时绑定多个事件
+$('input').bind('mouseout mouseover', function () { //移入和移出分别执行一次
+$('div').html(function (index, value) {
+return value + '1';
+});
+});
+//通过对象键值对绑定多个参数
+$('input').bind({ //传递一个对象
+'mouseout' : function () { //事件名的引号可以省略
+alert('移出');
+},
+'mouseover' : function () {
+alert('移入');
+}
+});
+事件删除 unbind
+//使用 unbind 删除绑定的事件
+$('input').unbind(); //删除所有当前元素的事件
+//使用 unbind 参数删除指定类型事件
+$('input').unbind('click'); //删除当前元素的 click 事件
+//使用 unbind 参数删除指定处理函数的事件
+function fn1() {
+alert('点击 1');
+}
+function fn2() {
+alert('点击 2');
+}
+$('input').bind('click', fn1);
+$('input').bind('click', fn2);
+$('input').unbind('click', fn1); //只删除 fn1 处理函数的事件
+
+事件的简写形式
+click(fn) 鼠标 触发每一个匹配元素的 click(单击)事件
+dblclick(fn) 鼠标 触发每一个匹配元素的 dblclick(双击)事件
+mousedown(fn) 鼠标 触发每一个匹配元素的 mousedown(点击后)事件
+mouseup(fn) 鼠标 触发每一个匹配元素的 mouseup(点击弹起)事件
+mouseover(fn) 鼠标 触发每一个匹配元素的 mouseover(鼠标移入)事件
+mouseout(fn) 鼠标 触发每一个匹配元素的 mouseout(鼠标移出)事件
+mousemove(fn) 鼠标 触发每一个匹配元素的mousemove(鼠标移动)事件
+mouseenter(fn) 鼠标 触发每一个匹配元素的 mouseenter(鼠标穿过)事件
+mouseleave(fn) 鼠标 触发每一个匹配元素的 mouseleave(鼠标穿出)事件
+keydown(fn) 键盘 触发每一个匹配元素的 keydown(键盘按下)事件
+keyup(fn) 键盘 触发每一个匹配元素的 keyup(键盘按下弹起)事件
+keypress(fn) 键盘 触发每一个匹配元素的 keypress(键盘按下)事件
+unload(fn) 文档 当卸载本页面时绑定一个要执行的函数
+resize(fn) 文档 触发每一个匹配元素的 resize(文档改变大小)事件
+scroll(fn) 文档 触发每一个匹配元素的 scroll(滚动条拖动)事件
+focus(fn) 表单 触发每一个匹配元素的 focus(焦点激活)事件
+blur(fn) 表单 触发每一个匹配元素的 blur(焦点丢失)事件
+focusin(fn) 表单 触发每一个匹配元素的 focusin(焦点激活)事件
+focusout(fn) 表单 触发每一个匹配元素的 focusout(焦点丢失)事件
+select(fn) 表单 触发每一个匹配元素的 select(文本选定)事件
+change(fn) 表单 触发每一个匹配元素的 change(值改变)事件
+submit(fn) 表单 触发每一个匹配元素的 submit(表单提交)事件
+
+复合事件
+eady(fn) 当 DOM 加载完毕触发事件
+hover(fn1,fn2) 当鼠标移入触发第一个 fn1，移出触发 fn2
+
+事件对象，浏览器自动传入的参数e，并且对这个参数设定的一些方法
+pageX/pageY 获取相对于页面原点的水平/垂直坐标
+screenX/screenY 获取显示器屏幕位置的水平/垂直坐标(非 jQuery 封装)
+clientX/clientY 获取相对于页面视口的水平/垂直坐标(非 jQuery 封装)
+which 获取鼠标的左中右键(1,2,3)，或获取键盘按键
+
+冒泡行为，是事件的父元素也会收到事件
+
+
+模拟操作，计算机自己自动在浏览器加载完成后执行trigger，可以用于执行自己命名的事件，也可以阻止默认行为
+$('input').click(function () {
+alert('我的第一次点击来自模拟！');
+}).trigger('click');
+除了通过 JavaScript 事件名触发，也可以通过自定义的事件触发，所谓自定义事件其实就是一个被.bind()绑定的任意函数。
+$('input').bind('myEvent', function () {
+alert('自定义事件！');
+}).trigger('myEvent');
+$('form').submit(function (e) {
+e.preventDefault(); //阻止默认行为
+}).trigger('submit');
+
+命名空间：给事件起个小名，方便删除
+$('input').bind('click.abc', function () {
+alert('abc');
+});
+$('input').bind('click.xyz', function () {
+alert('xyz');
+});
+$('input').unbind('click.abc'); //移除 click 实践中命名空间为 abc 的
+
+on off one
+1、on可以完全替代bind
+2、off可以替代unbind
+3、on、的事件委托
+$('#box').on('click', '.button', function () {//box是父元素，button是子元素
+$(this).clone().appendTo('#box');
+});
+4、当用one代替on、时，事件只执行一次
+事件委托：当子元素很多并且都是处理相同的事件，如果一个个子元素绑定过于麻烦所以就用事件委托，全部冒泡给父元素处理。
+
+动画
+show显示
+hide隐藏
+fadeIn淡入
+fadeOut淡出
+slideUp向上滑起
+slideDown向下滑落
+这六个函数有相同的格式
+1、最基本的
+$('.show').click(function () { //显示
+$('#box').show();
+});
+2、传参数，代表着速度快慢
+$('.show').click(function () {
+$('#box').show(1000); //显示用了 1 秒
+});
+3回调
+//使用.show()和.hide()的回调函数，可以实现列队动画效果。
+$('.show').click(function () {
+$('#box').show('slow', function () {
+alert('动画持续完毕后，执行我！');
+});
+});
+4我们在使用.show()和.hide()的时候，如果需要一个按钮切换操作，需要进行一些条件判断。而 jQuery 提供给我们一个类似功能的独立方法：.toggle()。
+$('.toggle').click(function () {
+$(this).toggle('slow');
+});
+$("button").toggle(function(){
+    $("body").css("background-color","green");},
+    function(){
+    $("body").css("background-color","red");},
+    function(){
+    $("body").css("background-color","yellow");}
+  );
+
+
+5animate动画
+同元素同步动画
+$('.animate').click(function () {
+$('#box').animate({
+                   'width' : '300px',
+                   'height' : '200px'
+                  }, 1000, function () {
+                                         alert('动画执行完毕执行我！');
+                                       });
+});
+
+同元素异步动画//不同元素同步
+$('.animate').click(function () {
+                                 $('#box').animate({'left' : '100px'});
+                                 $('#box').animate({'top' : '100px'});
+                                 $('#box').animate({'width' : '300px'});
+});
+
+不同元素异步，嵌套法
+$('.animate').click(function () {
+     $('#box').animate({
+             'left' : '100px'
+          }, function () {
+                          $('#box').animate({
+                                              'top' : '100px'
+                                            }, function () {
+                                                             $('#box').animate({
+                                                                                 'width' : '300px'
+                                                                               });
+                                                            });
+                         });
+});
+
+
+stop(clearQueue, gotoEnd)清空动画，clearQueue 传递一个布尔值，代表是否清空未执行完的动画列队，gotoEnd 代表是否直接将正在执行的动画跳转到末状态。
+
+.delay()方法。这个方法可以在动画之前设置延迟，也可以在列队动画中间加上。
+//开始延迟 1 秒钟，中间延迟 1 秒
+$('.animate').click(function () {
+   $('#box').delay(1000).animate({
+                                   'left' : '300px'
+                                }, 1000);
+
+$(':animated')//选择当前正在运行的动画
+
+$.fx.off = true; 
+//设置动画为关闭 true
+
+
+
+十二章ajax
+ajax是后期加载的方法，能后期加载多种文件
+$('form input[type=button]').click(function () {
+  $.ajax({
+          type : 'POST',       //提交的方式，是提交到后台，指定的文件
+          url : 'test.php',    //后期要加载的文件的路径
+          data : $('form').serialize(),//序列化，创建 URL 编码文本字符串。
+          success : function (response, status, xhr) {    //回调函数，response记录了文件内容，status是状态
+           alert(response);
+}
+});
+
+load加载一个文件
+$('input') .click(function () {
+                               $('#box').load('test.html');
+});
+
+load向后台先提交数据url=ycku，然后加载test.php，默认为get方式提交
+$('input').click(function () {
+                      $('#box').load('test.php?url=ycku');
+});
+
+//传递 data，则为 post 方式
+$('input').click(function () {
+                            $('#box').load('test.php', {
+                                                         url : 'ycku'
+                                                            });
+                             });
+
+
+$.get()和$.post()是全局方法，无须指定某个元素。对于用途而言，.load()适合做静态文件的异步获取，而对于需要传递参数到服务器页面的，$.get()和$.post()更加合适。
+
+$('input').click(function () {
+$.get('test.php', {
+url : 'ycku'
+}, function (response, status, xhr) {
+if (status == 'success') {
+$('#box').html(response);
+}
+}) //type 自动转为 html
+});
+
+//点击按钮后再加载 JS 文件
+$('input').click(function () {
+                            $.getScript('test.js');
+});
+
+
+第十三章ajax进阶
+当网速太慢时，加载需要时间，通过ajaxstar，开始加载时就触发，可以显示‘正在加载中’而ajaxstop在加载完毕后触发，然后把ajaxstart的文字隐藏，起到提示
+$(document).ajaxStart(function () {
+                                  $('.loading').show();
+                                  }).ajaxStop(function () {
+                                                           $('.loading').hide();
+                                });
+
+//如果请求时间太长，可以设置超时
+$.ajax({
+    timeout : 500
+});
+
+$.ajax({
+            global : false
+       });
+
+错误处理
+$(document).ajaxError(function (event, xhr, settings, infoError) {
+            alert(settings.type + ':' +infoError);
+});
+可以显示哪个文件错了，怎么错
+
+.ajaxSuccess()，对应一个局部方法：.success()，请求成功完成时执行。
+.ajaxComplete()，对应一个局部方法：.complete()，请求完成后注册一个回调函数。
+.ajaxSend()，没有对应的局部方法，只有属性 beforeSend，请求发送之前要绑定的函数。
+
+
+//$.ajax()方法，可以直接通过属性设置即可。
+$.ajax({
+ 	type : 'POST',
+	url : 'test.php',
+	data : $('form').serialize(),
+	success : function (response, status, xhr) {
+							$('#box').html(response);
+						   },
+	complete : function (xhr, status) {
+						alert('完成' + ' - ' + xhr.responseText + ' - ' + status);
+						},
+	beforeSend : function (xhr, settings) {
+                                                 alert('请求之前' + ' - ' + xhr.readyState + ' - ' + settings.url);
+ 					       }
+      }); 
+
+
+jqXHR  对象,在之前，我们使用了局部方法：.success()、.complete()和.error()。这三个局部方法并不
+是 XMLHttpRequest 对象调用的，而是$.ajax()之类的全局方法返回的对象调用的。这个对象，
+就是 jqXHR 对象，它是原生对象 XHR 的一个超集。
+
+var jqXHR = $.ajax({
+			type : 'POST',
+			url : 'test.php',
+			data : $('form').serialize()
+});
+		for (var i in jqXHR) {
+					document.write(i + '<br />');
+				}
+jqXHR.done(function (response) {
+				$('#box').html(response);
+				});
+使用 jqXHR 的连缀方式比$.ajax()的属性方式有三大好处：
+1.可连缀操作，可读性大大提高；
+2.可以多次执行同一个回调函数；
+3.为多个操作指定回调函数；
